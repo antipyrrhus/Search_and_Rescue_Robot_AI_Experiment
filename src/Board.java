@@ -177,7 +177,7 @@ public class Board
 	 * Method: getMonstersRemaining
 	 * @return the number of alive monsters on this Board.
 	 */
-	public int getMonstersRemaining() {
+	public int getwastesRemaining() {
 		int ret = 0;
 		for(int i = 0; i < rooms.length; i++) {
 			for(int j = 0; j < rooms[i].length; j++) {
