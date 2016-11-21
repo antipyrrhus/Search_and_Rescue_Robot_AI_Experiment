@@ -1,13 +1,9 @@
 
 /** Class: Board.java
- *  @author Yury Park (Starter code provided by Dr. Xu (modified from Sebastien's Code))
- *  @version 1.0 <p>
- *  Course: Artificial Intelligence, Dr. Xu
- *  Written / Updated: Apr 7, 2015
+ *  @author Yury Park
+ *  Course: HRI
  *
- *  This class - Board class. Composed of Room or RoomAsPerceivedByAI objects.
- *
- *  Purpose - This is the game board for WumpusWorld class.
+ *  This class - Board class. Composed of Cell or CellAsPerceivedByAI objects.
  */
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -18,7 +14,7 @@ import java.util.Random;
 public class Board
 {
 	/* Static ints to indicate directions, along with corresponding String[] array.
-	 * Accessed primarily by Player and Room / RoomAsPerceivedByAI class. */
+	 * Accessed primarily by Player and Cell / CellAsPerceivedByAI class. */
 	public static int NORTH = 0;
 	public static int EAST = 1;
 	public static int SOUTH = 2;
@@ -28,9 +24,9 @@ public class Board
 	public static final int ROWS = 6;  // ROWS by COLS cells
 	public static final int COLS = 6;
 	public static final int PITP = 10; //10% of rooms have pits
-	public static final int WUMPUSES = 2; //2 wumpuses
+	public static final int WASTES = 2; //2 WASTES
 
-	/* A Board may be composed of Room objects or RoomAsPerceivedByAI objects. The latter is used by the AI
+	/* A Board may be composed of Cell objects or CellAsPerceivedByAI objects. The latter is used by the AI
 	 * for logical deductions. See the corresponding class files for more info. */
 	public Cell[][] rooms;
 	public CellAsPerceivedByAI[][] roomsAI;
@@ -43,17 +39,17 @@ public class Board
 	 * Used in the event that players ALWAYS start the game in room (0,0).
 	 *
 	 * If the 2nd given boolean parameter is true, then creates
-	 * a Board object consisting of RoomAsPerceivedByAI objects. This Board is accessed by the AI
+	 * a Board object consisting of CellAsPerceivedByAI objects. This Board is accessed by the AI
 	 * who draws logical inferences / deductions based on incomplete information --
 	 * note that, unlike the other constructors above, this one does NOT contain any information
 	 * on which rooms contain pits, monsters or gold.
 	 *
 	 * If the 2nd given boolean parameter is false, then creates
-	 * a normal Board object consisting of Room.java objects. This board contains
+	 * a normal Board object consisting of Cell.java objects. This board contains
 	 * all information about every room whether it's been explored by the player(s) or not.
 	 * This board is NOT accessed by the AI.
 	 *
-	 * See RoomAsPerceivedByAI.java class file for more details
+	 * See CellAsPerceivedByAI.java class file for more details
 	 * @param roomAt_0_0_is_always_empty 1st boolean parameter. Sets whether room at (0,0) is always empty.
 	 * @param perceivedByAI 2nd boolean parameter. If set to true, creates a board composed of RoomAsPerceivedByAI objects.
 	 */
