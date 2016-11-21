@@ -51,7 +51,10 @@ public class SARMain extends JFrame {
 	private String humanOrRobotOption;
 	private JTextField txtRobot1;
 	private JTextField txtRobot2;
-	JTextField aiRandomPercentTxt;
+	private JTextField aiRandomPercentTxt;
+	private JRadioButton rdbtnplayerMode, rdbtnplayerMode_1, tutorialBtn,
+						 rdbtnStartingRoomIs, rdbtnRandomStartingRoom,
+						 humanOnlyBtn, robotOnlyBtn, humanAndRobotBtn;
 
 	/**
 	 * Launch the application.
@@ -88,10 +91,12 @@ public class SARMain extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
-		JRadioButton rdbtnplayerMode = new JRadioButton("1-Player Mode");
+		rdbtnplayerMode = new JRadioButton("1-Player Mode");
 		rdbtnplayerMode.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				singlePlayerMode = "S";
+				//Enable other buttons if disabled
+				SARMain.this.enableOrDisableBtns(true);
 			}
 		});
 		rdbtnplayerMode.setSelected(true);
@@ -99,17 +104,29 @@ public class SARMain extends JFrame {
 		rdbtnplayerMode.setBounds(43, 7, 109, 23);
 		contentPane.add(rdbtnplayerMode);
 
-		JRadioButton rdbtnplayerMode_1 = new JRadioButton("2-Player Mode");
+		rdbtnplayerMode_1 = new JRadioButton("2-Player Mode");
 		rdbtnplayerMode_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				singlePlayerMode = "";
+				//Enable other buttons if disabled
+				SARMain.this.enableOrDisableBtns(true);
 			}
 		});
 		buttonGroup.add(rdbtnplayerMode_1);
-		rdbtnplayerMode_1.setBounds(241, 7, 109, 23);
+		rdbtnplayerMode_1.setBounds(170, 7, 109, 23);
 		contentPane.add(rdbtnplayerMode_1);
 
-		JRadioButton rdbtnStartingRoomIs = new JRadioButton("Starting Room is (0,0)");
+		tutorialBtn = new JRadioButton("Tutorial Mode");
+		tutorialBtn.addActionListener(e -> {
+			singlePlayerMode = "T";
+			//Disable other buttons if enabled
+			SARMain.this.enableOrDisableBtns(false);
+		});
+		buttonGroup.add(tutorialBtn);
+		tutorialBtn.setBounds(300, 7, 109, 23);
+		contentPane.add(tutorialBtn);
+
+		rdbtnStartingRoomIs = new JRadioButton("Starting Room is (0,0)");
 		rdbtnStartingRoomIs.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				startRoomIs_Always_0_0 = "00";
@@ -120,7 +137,7 @@ public class SARMain extends JFrame {
 		rdbtnStartingRoomIs.setBounds(43, 47, 157, 23);
 		contentPane.add(rdbtnStartingRoomIs);
 
-		JRadioButton rdbtnRandomStartingRoom = new JRadioButton("Starting Room is Random");
+		rdbtnRandomStartingRoom = new JRadioButton("Starting Room is Random");
 		rdbtnRandomStartingRoom.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				startRoomIs_Always_0_0 = "";
@@ -135,7 +152,7 @@ public class SARMain extends JFrame {
 		manualVsAILabel.setBounds(43, 250, 300, 20);
 		contentPane.add(manualVsAILabel);
 		ButtonGroup manualVsAIBtnGrp = new ButtonGroup();
-		JRadioButton humanOnlyBtn = new JRadioButton("Manual Control Only");
+		humanOnlyBtn = new JRadioButton("Manual Control Only");
 		humanOnlyBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				humanOrRobotOption = "H";
@@ -145,7 +162,7 @@ public class SARMain extends JFrame {
 		humanOnlyBtn.setBounds(43, 270, 200, 20);
 		contentPane.add(humanOnlyBtn);
 
-		JRadioButton robotOnlyBtn = new JRadioButton("Automated Robot AI Only");
+		robotOnlyBtn = new JRadioButton("Automated Robot AI Only");
 		robotOnlyBtn.addActionListener(e -> {
 			humanOrRobotOption = "R";
 		});
@@ -153,7 +170,7 @@ public class SARMain extends JFrame {
 		robotOnlyBtn.setBounds(43, 290, 200, 20);
 		contentPane.add(robotOnlyBtn);
 
-		JRadioButton humanAndRobotBtn = new JRadioButton("Both Manual and AI Enabled");
+		humanAndRobotBtn = new JRadioButton("Both Manual and AI Enabled");
 		humanAndRobotBtn.addActionListener(e -> {
 			humanOrRobotOption = "B";
 		});
@@ -190,8 +207,14 @@ public class SARMain extends JFrame {
 
 				/* Run class SAR via constructor invocation with all the options as a single String parameter.
 				 * See SAR.java class for more details on its constructor. */
-				String optionString = singlePlayerMode + " " + startRoomIs_Always_0_0 + " " + aggressiveModeP1 + " " +
-									  aggressiveModeP2 + " " + aiRandomPercentTxt.getText() + "%" + " " + humanOrRobotOption;
+				String optionString = "";
+				if (SARMain.this.tutorialBtn.isSelected()) {
+					optionString = "T 00 0% B";	//Begin the game with the tutorial option if tutorial button selected
+				} else {
+					optionString = singlePlayerMode + " " + startRoomIs_Always_0_0 + " " + aggressiveModeP1 + " " +
+							  aggressiveModeP2 + " " + aiRandomPercentTxt.getText() + "%" + " " + humanOrRobotOption;
+				}
+
 				System.out.println(optionString);	//Testing
 				SAR ww = new SAR(optionString, txtRobot1.getText(), txtRobot2.getText());
 
@@ -272,5 +295,18 @@ public class SARMain extends JFrame {
 		this.aiRandomPercentTxt.setText("0");
 		this.aiRandomPercentTxt.setBounds(260, 216, 50, 20);
 		this.contentPane.add(this.aiRandomPercentTxt);
+	}
+
+	private void enableOrDisableBtns(boolean enable) {
+		comboBox.setEnabled(enable);
+		comboBox_1.setEnabled(enable);
+		txtRobot1.setEnabled(enable);
+		txtRobot2.setEnabled(enable);
+		aiRandomPercentTxt.setEnabled(enable);
+		rdbtnStartingRoomIs.setEnabled(enable);
+		rdbtnRandomStartingRoom.setEnabled(enable);
+		humanOnlyBtn.setEnabled(enable);
+		robotOnlyBtn.setEnabled(enable);
+		humanAndRobotBtn.setEnabled(enable);
 	}
 }
