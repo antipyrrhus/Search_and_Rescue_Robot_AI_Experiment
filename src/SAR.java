@@ -176,7 +176,7 @@ public class SAR extends JFrame {
 							"Pressing O brings up the Options Menu.\n\n" +
 							"Robot Sensors can detect the following environmental cues: \n"+
 							"1. Heightened temperature reading (indicated by a thermometer icon) in grids\n" +
-							"   adjacent to that containing a fire pit. This must be avoided at all costs.\n"+
+							"   adjacent to that containing a fire pit. This must be avoided.\n"+
 							"2. Poisonous stench in grids adjacent to that containing radioactive wastes.\n" +
 							"   They may either be avoided or be eliminated via shooting anti-radioactive materials towards it.\n" +
 							"3. Once the robot locates the victim, the victim's icon will be displayed.\n\n" +
@@ -371,7 +371,7 @@ public class SAR extends JFrame {
 			  + "- S to shoot decontaminant spray towards an adjacent grid in the direction\n"
 			  + "  the robot is currently facing (provided the robot has shots left),\n"
 			  + "- G to give aid to the victim once found.\n\n"
-			  + "- Avoid grids containing fire pits at all costs.\n"
+			  + "- Avoid grids containing fire pits.\n"
 			  + "- Either avoid or decontaminate grids containing radioactive wastes.\n"
 			  + "  (since the robot is out of decontaminants now, it must avoid these grids.)\n\n"
 			  + "Continue exploring the area on your own, using your best judgment.\n"
