@@ -891,8 +891,10 @@ public class SAR extends JFrame {
 				(new DecontaminantHitPopupThread()).start();
 				squares[cpl/ROWS][cpl%COLS].pics[1][1].setVisible(true); //show disinfected icon
 				currentPlayer.resetWasteKiller();
-			} else {
+			} else if (resultOfShooting == -1) {
 				(new DecontaminantMissedPopupThread()).start();
+			} else if (resultOfShooting == 0) {
+				JOptionPane.showMessageDialog(null, "Cannot use decontaminant (Shots remaining : " + currentPlayer.getNumOfShotsLeft() + ")", "", JOptionPane.PLAIN_MESSAGE);
 			}
 			validKeyTyped = true;
 			break;
