@@ -43,6 +43,9 @@ public class SAR extends JFrame {
 	private JTextArea instructions; // instructions on rules of the mission
 	private JScrollPane instructionsSP;	//this will contain the above JTextArea
 	private JButton btnNext;			// Button used for tutorials only
+	private JLabel pageNo;			//Label used for tutorials only
+	private int totalPagesOfTutorial;	//Total no. of pages of the tutorial content. Used for tutorials only
+	private int currentPage;		//used for tutorials only
 	private Box box;				// Box layout that will contain instructions and the button
 	private String[] tutorialStrArr;	//An array of instruction Strings for the tutorial mode
 	private int tutorialInstrIndex;		//An index to keep track of which instruction String to display
@@ -119,9 +122,16 @@ public class SAR extends JFrame {
 //			showPrevInstruction();
 //		});
 
+		//A label (used in tutorial only) to let the user know which page of the tutorial they're on
+		//Disabled by default
+		this.pageNo = new JLabel("Page __ of __");
+		this.pageNo.setVisible(false);
+
 		//Put the above button into a horizontal box
 		Box boxHoriz = Box.createHorizontalBox();
 		boxHoriz.add(btnNext);
+		boxHoriz.add(Box.createHorizontalStrut(10));
+		boxHoriz.add(pageNo);
 
 		//Now create a vertical box
 		box = Box.createVerticalBox();
@@ -216,6 +226,12 @@ public class SAR extends JFrame {
 		instructions.setText(tutorialStrArr[tutorialInstrIndex]);
 		btnNext.setEnabled(this.tutorialEnableBtnArr[tutorialInstrIndex]);
 		removeKeyListeners(btnNext.isEnabled());
+		this.currentPage++;
+		setPageNo(currentPage);
+	}
+
+	private void setPageNo(int currentPage) {
+		this.pageNo.setText("Page " + currentPage + " of " + this.totalPagesOfTutorial);
 	}
 
 	/**
@@ -226,6 +242,8 @@ public class SAR extends JFrame {
 		instructions.setText(tutorialStrArr[tutorialInstrIndex]);
 		btnNext.setEnabled(false);	//disable next button since game over
 		removeKeyListeners(false);	//do not remove (aka, add back) key listeners to allow user to restart
+		this.currentPage = totalPagesOfTutorial;
+		setPageNo(currentPage);
 	}
 
 //	private void showPrevInstruction() {
@@ -252,13 +270,6 @@ public class SAR extends JFrame {
 	 * Initializes tutorial session
 	 */
 	public void initTutorial() {
-		btnNext.setVisible(true);	//This button is only used in tutorial mode. Enable it
-//		btnPrev.setVisible(true);
-		removeKeyListeners(true);	//temporarily disable keyboard command listeners
-
-		this.instructions.setRows(3);
-		this.instructions.setColumns(50);
-
 		this.tutorialStrArr = new String[]{
 				"Before beginning the actual mission, you should learn how to control the robot.\n"
 			  + "Let's begin the tutorial and complete a practice mission together.",
@@ -354,16 +365,15 @@ public class SAR extends JFrame {
 			  + "Let's keep exploring by moving the robot now to the right.\n"
 			  + "Then press Next to continue.",
 
-			    "You are on your own for the remainder of this practice mission.\n"
-			  + "The key commands at your disposal are:\n\n"
+			    "You are on your own for the remainder of this practice mission. Remember:\n"
 			  + "- SHIFT to move the robot toward the direction it is currently facing,\n"
 			  + "- LEFT and RIGHT arrow keys to rotate the robot in-place,\n"
 			  + "- S to shoot decontaminant spray towards an adjacent grid in the direction\n"
 			  + "  the robot is currently facing (provided the robot has shots left),\n"
 			  + "- G to give aid to the victim once found.\n\n"
-			  + "Remember to avoid grids containing fire pits at all costs.\n"
-			  + "Either avoid or decontaminate grids containing radioactive wastes if possible.\n"
-			  + "(since the robot is out of decontaminants now, it must avoid these grids.)\n\n"
+			  + "- Avoid grids containing fire pits at all costs.\n"
+			  + "- Either avoid or decontaminate grids containing radioactive wastes.\n"
+			  + "  (since the robot is out of decontaminants now, it must avoid these grids.)\n\n"
 			  + "Continue exploring the area on your own, using your best judgment.\n"
 			  + "The person in need of rescue is somewhere in this area.\n"
 			  + "Once the person is discovered, the Next button will be enabled.",
@@ -372,9 +382,24 @@ public class SAR extends JFrame {
 			  + "Press G to give emergency aid and finish the mission successfully.",
 
 			  	"The robot has been destroyed, and the mission is a failure.\n"
-			  + "Fortunately, this was a practice mission. Press A to re-start now."
+			  + "Fortunately, this was a practice mission. Press A to start the tutorial again."
 
 		};
+
+		//Note: why length - 1? Because the tutorialStrArr contains two String elements that
+		//signify the end of the tutorial: 1) mission success, and 2) mission failure, retry.
+		//Only one of the above, not both, will be shown.
+		this.totalPagesOfTutorial = this.tutorialStrArr.length - 1;
+		this.currentPage = 0;
+
+		btnNext.setVisible(true);	//This button is only used in tutorial mode. Enable it
+//		btnPrev.setVisible(true);
+		pageNo.setVisible(true);
+		this.setPageNo(currentPage);
+		removeKeyListeners(true);	//temporarily disable keyboard command listeners
+
+		this.instructions.setRows(3);
+		this.instructions.setColumns(50);
 
 		//Buttons will be disabled or enabled during various points of the tutorial, as follows.
 		this.tutorialEnableBtnArr = new boolean[]{
