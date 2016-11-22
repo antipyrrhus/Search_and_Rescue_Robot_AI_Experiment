@@ -231,7 +231,7 @@ public class SAR extends JFrame {
 	}
 
 	private void setPageNo(int currentPage) {
-		this.pageNo.setText("Page " + currentPage + " of " + this.totalPagesOfTutorial);
+		this.pageNo.setText("Step " + currentPage + " of " + this.totalPagesOfTutorial);
 	}
 
 	/**
@@ -1197,10 +1197,10 @@ public class SAR extends JFrame {
 					statusBar.setForeground(Color.RED);
 					statusBar.setText("Mission Failed.");
 				} else if (currentState == GameState.H1_WON) {
-					statusBar.setForeground(Color.RED);
+					statusBar.setForeground(Color.BLUE);
 					statusBar.setText(h1.getName() + " has successfully completed the mission!");
 				} else if (currentState == GameState.H2_WON) {
-					statusBar.setForeground(Color.RED);
+					statusBar.setForeground(Color.BLUE);
 					statusBar.setText(h2.getName() + " has successfully completed the mission!");
 				}
 			}
@@ -1235,13 +1235,13 @@ public class SAR extends JFrame {
 
 	class DecontaminantMissedPopupThread extends Thread {
 		public void run() {
-			JOptionPane.showMessageDialog(null, "Missed!", "", JOptionPane.PLAIN_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Missed!\nShots remaining: " + currentPlayer.getNumOfShotsLeft(), "", JOptionPane.PLAIN_MESSAGE);
 		}
 	}
 
 	class DecontaminantHitPopupThread extends Thread {
 		public void run() {
-			JOptionPane.showMessageDialog(null, "Shot on target!", "", JOptionPane.PLAIN_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Shot on target!\nShots remaining: " + currentPlayer.getNumOfShotsLeft(), "", JOptionPane.PLAIN_MESSAGE);
 		}
 	}
 
