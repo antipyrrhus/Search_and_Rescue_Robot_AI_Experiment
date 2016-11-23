@@ -28,43 +28,45 @@ public class SAR extends JFrame {
 		PLAYING, DRAW, H1_WON, H2_WON
 	}
 
-	private GameState currentState;  // the current game state. See above enum for the possible game states.
+	protected GameState currentState;  // the current game state. See above enum for the possible game states.
 
-	private Player currentPlayer;  // the current player. Could be either h1 or h2. See below.
+	protected Player currentPlayer;  // the current player. Could be either h1 or h2. See below.
 	protected Player h1;    // hunter 1
 	protected String p1Name;
 	protected Player h2;    // hunter 2
 	protected String p2Name;
 
-	private Board board, boardPerceivedByAI; // Mission maps. Note: boardPerceivedByAI is used by robot AI for navigation.
-	private DrawCanvas canvas; // Drawing canvas (JPanel) for the mission board
-	private JLabel statusBar;  // Status Bar
-	private JLabel titleBar;  // Title Bar
-	private JTextArea instructions; // instructions on rules of the mission
-	private JScrollPane instructionsSP;	//this will contain the above JTextArea
-	private JButton btnNext;			// Button used for tutorials only
-	private JLabel pageNo;			//Label used for tutorials only
-	private int totalPagesOfTutorial;	//Total no. of pages of the tutorial content. Used for tutorials only
-	private int currentPage;		//used for tutorials only
-	private Box box;				// Box layout that will contain instructions and the button
-	private String[] tutorialStrArr;	//An array of instruction Strings for the tutorial mode
-	private int tutorialInstrIndex;		//An index to keep track of which instruction String to display
-	private boolean[] tutorialEnableBtnArr;	//An array of boolean values to enable or disable buttons at specific stages of the tutorial instructions.
-	private String[][] tutorialStatusCheckerArr;	//Array of String[] arrays to trigger various events during a tutorial.
+	protected Board board, boardPerceivedByAI; // Mission maps. Note: boardPerceivedByAI is used by robot AI for navigation.
+	protected DrawCanvas canvas; // Drawing canvas (JPanel) for the mission board
+	protected JLabel statusBar;  // Status Bar
+	protected JLabel titleBar;  // Title Bar
+	protected JTextArea instructions; // instructions on rules of the mission
+	protected JScrollPane instructionsSP;	//this will contain the above JTextArea
+	protected JButton btnNext;			// Button used for tutorials only
+	protected JLabel pageNo;			//Label used for tutorials only
+	protected int totalPagesOfTutorial;	//Total no. of pages of the tutorial content. Used for tutorials only
+	protected int currentPage;		//used for tutorials only
+	protected Box box;				// Box layout that will contain instructions and the button
+	protected String[] tutorialStrArr;	//An array of instruction Strings for the tutorial mode
+	protected int tutorialInstrIndex;		//An index to keep track of which instruction String to display
+	protected boolean[] tutorialEnableBtnArr;	//An array of boolean values to enable or disable buttons at specific stages of the tutorial instructions.
+	protected String[][] tutorialStatusCheckerArr;	//Array of String[] arrays to trigger various events during a tutorial.
 
-	private KeyAdapter keyAdapter;			//Keyboard listener
+	protected KeyAdapter keyAdapter;			//Keyboard listener
 
-	private DrawRoom[][] squares = new DrawRoom[ROWS][COLS]; //rooms
-	private ImageIcon imageH1[] = new ImageIcon[4];//4 images for robot hunter 1
-	private ImageIcon imageH2[] = new ImageIcon[4];//4 images for robot hunter 2
-	private int currentImageH1; //image hunter 1 currently using
-	private int currentImageH2; //image hunter 2 currently using
+	protected DrawRoom[][] squares = new DrawRoom[ROWS][COLS]; //rooms
+	protected ImageIcon imageH1[] = new ImageIcon[4];//4 images for robot hunter 1
+	protected ImageIcon imageH2[] = new ImageIcon[4];//4 images for robot hunter 2
+	protected int currentImageH1; //image hunter 1 currently using
+	protected int currentImageH2; //image hunter 2 currently using
 
-	private String options;	//A String containing some options to be provided by the end-user
-//	private java.util.Timer timer;
-	private String controlMode;	//Human manual, AI, or both modes enabled
-	private int numOfMoves;		//Total number of moves the robot took in a mission
-	private int resultOfShooting; 	//In the event the robot fires its decontaminant shot, this will track whether
+	private Tutorial tutorial;
+
+	protected String options;	//A String containing some options to be provided by the end-user
+//	protected java.util.Timer timer;
+	protected String controlMode;	//Human manual, AI, or both modes enabled
+	protected int numOfMoves;		//Total number of moves the robot took in a mission
+	protected int resultOfShooting; 	//In the event the robot fires its decontaminant shot, this will track whether
 									//the shot was on target (1), or whether it missed (-1), or whether the shot couldn't be fired due to being out of ammo (0).
 
 	/**
@@ -113,9 +115,9 @@ public class SAR extends JFrame {
 		//This button is used for tutorial only, and disabled by default
 		btnNext = new JButton("Next");
 		btnNext.setVisible(false);
-		btnNext.addActionListener(e -> {
-			showNextInstruction();
-		});
+//		btnNext.addActionListener(e -> {
+//			showNextInstruction();
+//		});
 //		btnPrev = new JButton("Previous");
 //		btnPrev.setVisible(false);
 //		btnPrev.addActionListener(e -> {
@@ -160,39 +162,13 @@ public class SAR extends JFrame {
 
 
 		if (this.options.contains("T")) {	//tutorial mode
-			this.initTutorial();
+			tutorial = new Tutorial(SAR.this);		//TODO testing. Enable this line of code later
+			this.setBtnNextActionListener(tutorial);
+//			PracticeDrillHuman pdh = new PracticeDrillHuman(SAR.this);
 		} else {							//non-tutorial mode
 
 			// Setup the instruction area (JTextArea)
-			instructions.setText(
-					"Mission goal: Locate the displaced victim.\n\n" +
-							"Robot moves:\n" +
-							"- Arrow keys to move forward, turn left, or turn right.\n" +
-							"- 'S' to shoot decontaminant materials from an adjacent grid (the robot can only use this option twice).\n" +
-							"- 'G' to give emergency first aid to the victim once located (mission success).\n" +
-							"- 'A' to attempt another mission (only available once current mission is terminated in success or failure).\n" +
-							"- 'Q' to quit / abort the current mission\n" +
-							"At any time, press SPACEBAR to enable AI mode for a single turn.\n\n" +
-							"Pressing O brings up the Options Menu.\n\n" +
-							"Robot Sensors can detect the following environmental cues: \n"+
-							"1. Heightened temperature reading (indicated by a thermometer icon) in grids\n" +
-							"   adjacent to that containing a fire pit. This must be avoided.\n"+
-							"2. Poisonous stench in grids adjacent to that containing radioactive wastes.\n" +
-							"   They may either be avoided or be eliminated via shooting anti-radioactive materials towards it.\n" +
-							"3. Once the robot locates the victim, the victim's icon will be displayed.\n\n" +
-							"The environment contains:\n"+
-							"1. One dislocated victim,\n"+
-							"2. Two grids that contain radioactive wastes,\n" +
-							"3. Estimated 10% of the grids may contain fire pits.\n\n"+
-							"Equipment: " +
-							"The robot is equipped with two shots of anti-radioactive decontaminants.\n\n" +
-							"Other Notes:\n"+
-							"1. The robot is destroyed if it is in the square with a fire pit.\n"+
-							"2. The robot is destroyed if it is in the square with active radioactive wastes.\n"+
-							"3. Shooting decontaminants toward a direction the robot is facing\n"+
-							"   will disable radioactive wastes (if any) in that adjacent grid, and\n"+
-							"   an icon (signifying disinfection) will be displayed."
-					);
+			instructions.setText(InstructionMsg.DEFAULT);
 
 			(new StartMissionPopupThread()).start();	//popup GUI to start mission
 
@@ -206,47 +182,72 @@ public class SAR extends JFrame {
 	 * Method: showNextInstruction
 	 * Used in tutorial mode only. Shows the next set of instructions.
 	 */
-	private void showNextInstruction() {
-		//Base case. If the mission ended in success (2nd-to last element in the tutorialStrArr array)
-		//then we will go on to the next stage of the tutorial instead of showing the last element in the array,
-		//which is a mission failed message.
-		if (tutorialInstrIndex == tutorialStrArr.length - 2) {
-			//TODO
-			return;
-		}
+//	protected void showNextInstruction() {
+//		//Base case. If the mission ended in success (2nd-to last element in the tutorialStrArr array)
+//		//then we will go on to the next stage of the tutorial instead of showing the last element in the array,
+//		//which is a mission failed message.
+//		if (tutorialInstrIndex == tutorialStrArr.length - 2) {
+//			//TODO
+//			new PracticeDrillHuman(SAR.this);
+//			return;
+//		}
+//
+//		//Another base case to prevent out of index error
+//		if (tutorialInstrIndex + 1 >= tutorialStrArr.length) {
+//			tutorialInstrIndex = tutorialStrArr.length - 1;
+//			return;
+//		}
+//
+//		tutorialInstrIndex++;
+//		System.out.println(tutorialInstrIndex);
+//		instructions.setText(tutorialStrArr[tutorialInstrIndex]);
+//		btnNext.setEnabled(this.tutorialEnableBtnArr[tutorialInstrIndex]);
+//		removeKeyListeners(btnNext.isEnabled());
+//		this.currentPage++;
+//		setPageNo(currentPage);
+//		tutorial.showNextInstruction();
+//	}
 
-		//Another base case to prevent out of index error
-		if (tutorialInstrIndex + 1 >= tutorialStrArr.length) {
-			tutorialInstrIndex = tutorialStrArr.length - 1;
-			return;
-		}
-
-		tutorialInstrIndex++;
-		System.out.println(tutorialInstrIndex);
-		instructions.setText(tutorialStrArr[tutorialInstrIndex]);
-		btnNext.setEnabled(this.tutorialEnableBtnArr[tutorialInstrIndex]);
-		removeKeyListeners(btnNext.isEnabled());
-		this.currentPage++;
-		setPageNo(currentPage);
+	protected void setPageNo(int currentPage) {
+		this.pageNo.setText("Step " + currentPage + " of " + this.totalPagesOfTutorial);
+	}
+	protected void enablePageNo() {
+		this.pageNo.setVisible(true);
 	}
 
-	private void setPageNo(int currentPage) {
-		this.pageNo.setText("Step " + currentPage + " of " + this.totalPagesOfTutorial);
+	protected void enableBtnNext() {
+		this.btnNext.setVisible(true);
+	}
+
+	protected void setBtnNextActionListener(Object o) {
+		//TODO set button listeners depending on which object is in the parameter
+		if (o instanceof Tutorial) {
+			this.btnNext.addActionListener(e-> ((Tutorial) o).showNextInstruction());
+		} else if (o instanceof PracticeDrillHuman) {
+			this.btnNext.addActionListener(e -> ((PracticeDrillHuman)o).showNextInstruction());
+		} else {
+			//TODO...
+		}
+	}
+
+	protected void setInstrRowCol(int row, int col) {
+		instructions.setRows(row);
+		instructions.setColumns(col);
 	}
 
 	/**
 	 * Used in tutorial mode only. Shows mission failed message and allows user to restart tutorial
 	 */
-	private void showMissionFailureInstruction() {
-		tutorialInstrIndex = tutorialStrArr.length - 1;
-		instructions.setText(tutorialStrArr[tutorialInstrIndex]);
-		btnNext.setEnabled(false);	//disable next button since game over
-		removeKeyListeners(false);	//do not remove (aka, add back) key listeners to allow user to restart
-		this.currentPage = totalPagesOfTutorial;
-		setPageNo(currentPage);
-	}
+//	protected void showMissionFailureInstruction() {
+//		tutorialInstrIndex = tutorialStrArr.length - 1;
+//		instructions.setText(tutorialStrArr[tutorialInstrIndex]);
+//		btnNext.setEnabled(false);	//disable next button since game over
+//		removeKeyListeners(false);	//do not remove (aka, add back) key listeners to allow user to restart
+//		this.currentPage = totalPagesOfTutorial;
+//		setPageNo(currentPage);
+//	}
 
-//	private void showPrevInstruction() {
+//	protected void showPrevInstruction() {
 //		tutorialInstrIndex = Math.max(0, tutorialInstrIndex - 1);
 //		System.out.println(tutorialInstrIndex);
 //		instructions.setText(tutorialStrArr[tutorialInstrIndex]);
@@ -254,7 +255,7 @@ public class SAR extends JFrame {
 //		removeKeyListeners(btnNext.isEnabled());
 //	}
 
-	private void removeKeyListeners(boolean b) {
+	protected void removeKeyListeners(boolean b) {
 		if (b == true) {
 			canvas.removeKeyListeners();
 			System.out.println("key listeners removed");
@@ -269,245 +270,245 @@ public class SAR extends JFrame {
 	 * Method: initTutorial
 	 * Initializes tutorial session
 	 */
-	public void initTutorial() {
-		this.tutorialStrArr = new String[]{
-				"Before beginning the actual mission, you should learn how to control the robot.\n"
-			  + "Let's begin the tutorial and complete a practice mission together.",
-
-				"To the left, you see the map of the area the robot will need to traverse\n"
-			  + "in search of the victim.",
-
-			    "The robot is represented by the circular-shaped object.",
-
-			    "The robot is currently facing EAST, as indicated by the symbol >.",
-
-			    "The starting area is shaded grey, meaning that the robot has explored it.\n"
-			  + "As the robot explores further, more sections of the map will be shaded grey.",
-
-			    "You can use the LEFT, and RIGHT arrow keys respectively\n"
-			  + "to rotate the robot left or right.\n"
-			  + "(IMPORTANT: the LEFT and RIGHT keys do not actually move the robot, but only\n"
-			  + "rotate the robot in place. The UP and DOWN arrow keys do nothing.)\n\n"
-			  + "Pressing the SHIFT key moves the robot in the direction it is currently facing.\n"
-			  + "(For example, if the robot were facing SOUTH, then pressing SHIFT will move it\n"
-			  + "towards the south.)\n\n"
-			  + "Right now, the robot is facing EAST. So, pressing SHIFT now will move it\n"
-			  + "one step to the eastern direction.\n\n"
-			  + "Press the SHIFT key now to move the robot one step to the east.\n"
-			  + "(Once you do, the 'Next' button below will be enabled, and you can continue.)",
-
-			    "A thermometer icon here means the robot has picked up high temperature reading.\n"
-			  + "This indicates that one or more adjacent grid(s) contain a fire pit.\n"
-			  + "(There is also a smoke icon here, but we'll learn about this later.)",
-
-			    "Fire pits are dangerous and will destroy the robot.\n"
-			  + "Hence, they should always be avoided.",
-
-			    "So in this case, there may be a fire pit to the robot's right or to the south.\n"
-			  + "It's also possible that there are fire pits in both places!\n"
-			  + "We would not wish to take the risk of falling into a fire pit if we can avoid it,\n"
-			  + "so let's head back the way we came and explore the southern direction instead.\n\n"
-			  + "Move the robot back to the starting grid, then move it one step south.\n"
-			  + "(Remember, RIGHT and LEFT arrow keys to rotate, and SHIFT to move.)\n"
-			  + "Do this now, then press Next to continue.",
-
-			    "Now let's learn about what the smoke icon means.\n"
-			  + "It means that the robot's sensors have picked up noxious chemicals nearby, and\n"
-			  + "one or more adjacent grid(s) are infected with radioactive chemicals.",
-
-			    "A grid with radioactive chemicals will also destroy the robot.\n"
-			  + "But this time, the robot has a choice.\n\n"
-			  + "It can either avoid a grid with radioactive chemicals, or disinfect them\n"
-			  + "by shooting a decontaminant spray towards that direction.",
-
-			    "The robot is equipped with two shots of the decontaminant spray, so\n"
-			  + "we should be judicious about when to use them.\n\n"
-			  + "If the robot uses up the decontaminants too early, it may be in trouble later\n"
-			  + "when it really needs them.",
-
-			    "To use the decontaminants, we can the robot face the direction of the grid\n"
-			  + "which is believed to be infected with radioactive chemicals.",
-
-			    "Since we don't know whether the grid to the south or east is infected,\n"
-			  + "we should simply make a guess in this case.\n"
-			  + "We'll try using the decontaminant on the neighboring grid to the south.",
-
-			    "Since the robot is currently facing south, we don't have to rotate the robot.\n"
-			  + "Press the S key to shoot the decontaminant spray towards the south.\n"
-			  + "Do this now, close the popup window that follows, then press Next to continue.",
-
-			    "Nothing happened. The shot missed.\n"
-			  + "This means the southern neighboring grid did not contain radioactive chemicals.\n"
-			  + "Therefore, the eastern neighboring grid must be the infected one.",
-
-			    "By the way, if you observe the status bar message at the bottom, you will see\n"
-			  + "that the 'Decontaminant shots left' have decreased from 2 to 1.\n\n"
-			  + "The robot has one decontaminant shot remaining. While we could use this on\n"
-			  + "the eastern grid now, we might prefer to save it, since we know\n"
-			  + "for certain that the southern grid is safe, and could explore there instead.",
-
-			    "Let's move the robot one step further to the south.\n"
-			  + "Do this now, then press Next to continue.",
-
-			    "There is another heightened temperature reading here, meaning fire pits are nearby.\n"
-			  + "Since fire pits must be avoided, and we would prefer not to take that risk,\n"
-			  + "it may be safer to go back one step north and decontaminate the chemicals which\n"
-			  + "we know resides in the grid at the second row and second column.\n"
-			  + "Go ahead and move north, then press Next to continue.",
-
-			  	"Now have the robot rotate to the east by pressing the RIGHT arrow key,\n"
-			  + "then press Next to continue.",
-
-			  	"OK. Go ahead and press S now to fire the decontaminant shot, then press Next.",
-
-			    "Good. the icon that appeared signals that the shot was a success.\n"
-			  + "Unfortunately, the robot has no more decontaminants left.\n\n"
-			  + "Let's keep exploring by moving the robot now to the right.\n"
-			  + "Then press Next to continue.",
-
-			    "You are on your own for the remainder of this practice mission. Remember:\n"
-			  + "- SHIFT to move the robot toward the direction it is currently facing,\n"
-			  + "- LEFT and RIGHT arrow keys to rotate the robot in-place,\n"
-			  + "- S to shoot decontaminant spray towards an adjacent grid in the direction\n"
-			  + "  the robot is currently facing (provided the robot has shots left),\n"
-			  + "- G to give aid to the victim once found.\n\n"
-			  + "- Avoid grids containing fire pits.\n"
-			  + "- Either avoid or decontaminate grids containing radioactive wastes.\n"
-			  + "  (since the robot is out of decontaminants now, it must avoid these grids.)\n\n"
-			  + "Continue exploring the area on your own, using your best judgment.\n"
-			  + "The person in need of rescue is somewhere in this area.\n"
-			  + "Once the person is discovered, the Next button will be enabled.",
-
-			    "You have located the victim! Well done.\n"
-			  + "Press G to give emergency aid and finish the mission successfully.",
-
-			  	"The robot has been destroyed, and the mission is a failure.\n"
-			  + "Fortunately, this was a practice mission. Press A to start the tutorial again."
-
-		};
-
-		//Note: why length - 1? Because the tutorialStrArr contains two String elements that
-		//signify the end of the tutorial: 1) mission success, and 2) mission failure, retry.
-		//Only one of the above, not both, will be shown.
-		this.totalPagesOfTutorial = this.tutorialStrArr.length - 1;
-		this.currentPage = 0;
-
-		btnNext.setVisible(true);	//This button is only used in tutorial mode. Enable it
-//		btnPrev.setVisible(true);
-		pageNo.setVisible(true);
-		this.setPageNo(currentPage);
-		removeKeyListeners(true);	//temporarily disable keyboard command listeners
-
-		this.instructions.setRows(3);
-		this.instructions.setColumns(50);
-
-		//Buttons will be disabled or enabled during various points of the tutorial, as follows.
-		this.tutorialEnableBtnArr = new boolean[]{
-				true,		//Before beginning the actual mission,...
-				true,		//To the left, you see the map...
-				true,		//The robot is represented by the circular-shaped ...
-				true,		//The robot is currently facing EAST...
-				true,		//The starting area is shaded grey....
-				false,		//...Move the robot to row 1, column 2 now...
-				true,		//A thermometer icon here means ...
-				true,		//Fire pits are dangerous...
-				false,		//Move the robot back to the starting grid, then move it one step south...
-				true,		//There is a smoke icon here...
-				true,		//A grid with radioactive chemicals...
-				true,		//The robot is equipped with two shots...
-				true,		//To use the decontaminant,...
-				true,		//Since we don't know whether ...
-				false,		//Press the S key ...
-				true,		//Nothing happened..
-				true,		//If you observe the status bar message ...
-				false,		//Let's move the robot to the south...
-				false,		//safer to go back one step north...
-				false,		//Now have the robot face east...
-				false,		//Go ahead and press S now...
-				false,		//moving the robot now to the right...
-				false,		//Continue exploring...
-				false,		//Press G to give emergency aid...
-				false,		//Press A to re-start now...
-		};
-
-		//This array of arrays will keep track of various trigger events that must occur during a tutorial.
-		this.tutorialStatusCheckerArr = new String[][]{
-												{null, null, null},
-												{null, null, null},
-												{null, null, null},
-												{null, null, null},
-												{null, null, null},
-												{"M", "0", "1"},
-												{null, null, null},
-												{null, null, null},
-												{"M", "1", "0"},
-												{null, null, null},
-												{null, null, null},
-												{null, null, null},
-												{null, null, null},
-												{null, null, null},
-												{"S", "3", "0"},
-												{null, null, null},
-												{null, null, null},
-												{"M", "2", "0"},
-												{"M", "1", "0"},
-												{"R", null, null},
-												{"S", "1", "1"},
-												{"M", "1", "1"},
-												{"M", "3", "4"},
-												{"G", "3", "4"},
-												{"A", null, null},
-												};
-
-
-		this.tutorialInstrIndex = -1;
-		this.instructions.setFont(instructions.getFont().deriveFont(18f));
-		this.showNextInstruction();
-
-		board = new Board(new String[][]
-				{{"", "", "P", "", "", ""},
-				{"", "W", "", "", "", ""},
-				{"", "", "", "", "", ""},
-				{"P", "", "P", "", "G", ""},
-				{"P", "", "", "", "", ""},
-				{"", "", "W", "", "", ""},
-				});
-		boardPerceivedByAI = new Board(true, true);
-
-		Cell startRoom = board.getRoom(0, 0);
-		startRoom.setHints();	//custom method to display information about this room on the GUI.
-		CellAsPerceivedByAI startRoomAI = boardPerceivedByAI.getRoomAI(startRoom.getX(), startRoom.getY());	//startRoomAI is the same location as startRoom
-		startRoomAI.setExplored(true, startRoom);	//Custom method to set this cell as having been explored by the robot.
-
-		/* Every time a room / cell is explored, the AI will use the custom method below to logically deduce and assign
-		 * the probability of monsters and pits in every neighboring room. See the CellAsPerceivedByAI.java class for more details. */
-		startRoomAI.assignProbabilityToNeighbors(this.board, this.boardPerceivedByAI);
-
-		/* Create two players. Each player can be either a human or AI. */
-		h1 = new Player(startRoom, startRoomAI, this.p1Name);
-		h1.setAI(true);	//either or both players can be an AI.
-		h1.setAggressiveModeOn(false);  //We'll set aggressive mode to OFF for this tutorial
-		h2 = new Player(startRoom, startRoomAI, this.p2Name);
-		h2.setAI(true);	//either or both players can be an AI.
-		h2.setAggressiveModeOn(false);
-		h2.setOutOfGame(true);	//Player 2 will not be involved for the tutorial
-
-		//Manual control, Robot AI automation, or both options enabled
-		this.controlMode = "B";		//both human manual control and robot AI control enabled for the tutorial
-
-		currentPlayer = h1;
-		currentState = GameState.PLAYING; // mission state: ready to start
-		currentImageH1 = 0;
-		currentImageH2 = 0;
-		for (int i = 0; i < ROWS; i++) {  //hide pictures in all rooms
-			for (int j = 0; j < COLS; j++){
-				squares[i][j].setBackground(Color.WHITE);
-				squares[i][j].hidePics();
-			}
-		}
-		squares[startRoomAI.getX()][startRoomAI.getY()].setBackground(Color.LIGHT_GRAY); //Gray out starting room to indicate it's explored
-		repaint();
-	}
+//	public void initTutorial() {
+//		this.tutorialStrArr = new String[]{
+//				"Before beginning the actual mission, you should learn how to control the robot.\n"
+//			  + "Let's begin the tutorial and complete a practice mission together.",
+//
+//				"To the left, you see the map of the area the robot will need to traverse\n"
+//			  + "in search of the victim.",
+//
+//			    "The robot is represented by the circular-shaped object.",
+//
+//			    "The robot is currently facing EAST, as indicated by the symbol >.",
+//
+//			    "The starting area is shaded grey, meaning that the robot has explored it.\n"
+//			  + "As the robot explores further, more sections of the map will be shaded grey.",
+//
+//			    "You can use the LEFT, and RIGHT arrow keys respectively\n"
+//			  + "to rotate the robot left or right.\n"
+//			  + "(IMPORTANT: the LEFT and RIGHT keys do not actually move the robot, but only\n"
+//			  + "rotate the robot in place. The UP and DOWN arrow keys do nothing.)\n\n"
+//			  + "Pressing the SHIFT key moves the robot in the direction it is currently facing.\n"
+//			  + "(For example, if the robot were facing SOUTH, then pressing SHIFT will move it\n"
+//			  + "towards the south.)\n\n"
+//			  + "Right now, the robot is facing EAST. So, pressing SHIFT now will move it\n"
+//			  + "one step to the eastern direction.\n\n"
+//			  + "Press the SHIFT key now to move the robot one step to the east.\n"
+//			  + "(Once you do, the 'Next' button below will be enabled, and you can continue.)",
+//
+//			    "A thermometer icon here means the robot has picked up high temperature reading.\n"
+//			  + "This indicates that one or more adjacent grid(s) contain a fire pit.\n"
+//			  + "(There is also a smoke icon here, but we'll learn about this later.)",
+//
+//			    "Fire pits are dangerous and will destroy the robot.\n"
+//			  + "Hence, they should always be avoided.",
+//
+//			    "So in this case, there may be a fire pit to the robot's right or to the south.\n"
+//			  + "It's also possible that there are fire pits in both places!\n"
+//			  + "We would not wish to take the risk of falling into a fire pit if we can avoid it,\n"
+//			  + "so let's head back the way we came and explore the southern direction instead.\n\n"
+//			  + "Move the robot back to the starting grid, then move it one step south.\n"
+//			  + "(Remember, RIGHT and LEFT arrow keys to rotate, and SHIFT to move.)\n"
+//			  + "Do this now, then press Next to continue.",
+//
+//			    "Now let's learn about what the smoke icon means.\n"
+//			  + "It means that the robot's sensors have picked up noxious chemicals nearby, and\n"
+//			  + "one or more adjacent grid(s) are infected with radioactive chemicals.",
+//
+//			    "A grid with radioactive chemicals will also destroy the robot.\n"
+//			  + "But this time, the robot has a choice.\n\n"
+//			  + "It can either avoid a grid with radioactive chemicals, or disinfect them\n"
+//			  + "by shooting a decontaminant spray towards that direction.",
+//
+//			    "The robot is equipped with two shots of the decontaminant spray, so\n"
+//			  + "we should be judicious about when to use them.\n\n"
+//			  + "If the robot uses up the decontaminants too early, it may be in trouble later\n"
+//			  + "when it really needs them.",
+//
+//			    "To use the decontaminants, we can the robot face the direction of the grid\n"
+//			  + "which is believed to be infected with radioactive chemicals.",
+//
+//			    "Since we don't know whether the grid to the south or east is infected,\n"
+//			  + "we should simply make a guess in this case.\n"
+//			  + "We'll try using the decontaminant on the neighboring grid to the south.",
+//
+//			    "Since the robot is currently facing south, we don't have to rotate the robot.\n"
+//			  + "Press the S key to shoot the decontaminant spray towards the south.\n"
+//			  + "Do this now, close the popup window that follows, then press Next to continue.",
+//
+//			    "Nothing happened. The shot missed.\n"
+//			  + "This means the southern neighboring grid did not contain radioactive chemicals.\n"
+//			  + "Therefore, the eastern neighboring grid must be the infected one.",
+//
+//			    "By the way, if you observe the status bar message at the bottom, you will see\n"
+//			  + "that the 'Decontaminant shots left' have decreased from 2 to 1.\n\n"
+//			  + "The robot has one decontaminant shot remaining. While we could use this on\n"
+//			  + "the eastern grid now, we might prefer to save it, since we know\n"
+//			  + "for certain that the southern grid is safe, and could explore there instead.",
+//
+//			    "Let's move the robot one step further to the south.\n"
+//			  + "Do this now, then press Next to continue.",
+//
+//			    "There is another heightened temperature reading here, meaning fire pits are nearby.\n"
+//			  + "Since fire pits must be avoided, and we would prefer not to take that risk,\n"
+//			  + "it may be safer to go back one step north and decontaminate the chemicals which\n"
+//			  + "we know resides in the grid at the second row and second column.\n"
+//			  + "Go ahead and move north, then press Next to continue.",
+//
+//			  	"Now have the robot rotate to the east by pressing the RIGHT arrow key,\n"
+//			  + "then press Next to continue.",
+//
+//			  	"OK. Go ahead and press S now to fire the decontaminant shot, then press Next.",
+//
+//			    "Good. the icon that appeared signals that the shot was a success.\n"
+//			  + "Unfortunately, the robot has no more decontaminants left.\n\n"
+//			  + "Let's keep exploring by moving the robot now to the right.\n"
+//			  + "Then press Next to continue.",
+//
+//			    "You are on your own for the remainder of this practice mission. Remember:\n"
+//			  + "- SHIFT to move the robot toward the direction it is currently facing,\n"
+//			  + "- LEFT and RIGHT arrow keys to rotate the robot in-place,\n"
+//			  + "- S to shoot decontaminant spray towards an adjacent grid in the direction\n"
+//			  + "  the robot is currently facing (provided the robot has shots left),\n"
+//			  + "- G to give aid to the victim once found.\n\n"
+//			  + "- Avoid grids containing fire pits.\n"
+//			  + "- Either avoid or decontaminate grids containing radioactive wastes.\n"
+//			  + "  (since the robot is out of decontaminants now, it must avoid these grids.)\n\n"
+//			  + "Continue exploring the area on your own, using your best judgment.\n"
+//			  + "The person in need of rescue is somewhere in this area.\n"
+//			  + "Once the person is discovered, the Next button will be enabled.",
+//
+//			    "You have located the victim! Well done.\n"
+//			  + "Press G to give emergency aid and finish the mission successfully.",
+//
+//			  	"The robot has been destroyed, and the mission is a failure.\n"
+//			  + "Fortunately, this was a practice mission. Press A to start the tutorial again."
+//
+//		};
+//
+//		//Note: why length - 1? Because the tutorialStrArr contains two String elements that
+//		//signify the end of the tutorial: 1) mission success, and 2) mission failure, retry.
+//		//Only one of the above, not both, will be shown.
+//		this.totalPagesOfTutorial = this.tutorialStrArr.length - 1;
+//		this.currentPage = 0;
+//
+//		btnNext.setVisible(true);	//This button is only used in tutorial mode. Enable it
+////		btnPrev.setVisible(true);
+//		pageNo.setVisible(true);
+//		this.setPageNo(currentPage);
+//		removeKeyListeners(true);	//temporarily disable keyboard command listeners
+//
+//		this.instructions.setRows(3);
+//		this.instructions.setColumns(50);
+//
+//		//Buttons will be disabled or enabled during various points of the tutorial, as follows.
+//		this.tutorialEnableBtnArr = new boolean[]{
+//				true,		//Before beginning the actual mission,...
+//				true,		//To the left, you see the map...
+//				true,		//The robot is represented by the circular-shaped ...
+//				true,		//The robot is currently facing EAST...
+//				true,		//The starting area is shaded grey....
+//				false,		//...Move the robot to row 1, column 2 now...
+//				true,		//A thermometer icon here means ...
+//				true,		//Fire pits are dangerous...
+//				false,		//Move the robot back to the starting grid, then move it one step south...
+//				true,		//There is a smoke icon here...
+//				true,		//A grid with radioactive chemicals...
+//				true,		//The robot is equipped with two shots...
+//				true,		//To use the decontaminant,...
+//				true,		//Since we don't know whether ...
+//				false,		//Press the S key ...
+//				true,		//Nothing happened..
+//				true,		//If you observe the status bar message ...
+//				false,		//Let's move the robot to the south...
+//				false,		//safer to go back one step north...
+//				false,		//Now have the robot face east...
+//				false,		//Go ahead and press S now...
+//				false,		//moving the robot now to the right...
+//				false,		//Continue exploring...
+//				false,		//Press G to give emergency aid...
+//				false,		//Press A to re-start now...
+//		};
+//
+//		//This array of arrays will keep track of various trigger events that must occur during a tutorial.
+//		this.tutorialStatusCheckerArr = new String[][]{
+//												{null, null, null},
+//												{null, null, null},
+//												{null, null, null},
+//												{null, null, null},
+//												{null, null, null},
+//												{"M", "0", "1"},
+//												{null, null, null},
+//												{null, null, null},
+//												{"M", "1", "0"},
+//												{null, null, null},
+//												{null, null, null},
+//												{null, null, null},
+//												{null, null, null},
+//												{null, null, null},
+//												{"S", "3", "0"},
+//												{null, null, null},
+//												{null, null, null},
+//												{"M", "2", "0"},
+//												{"M", "1", "0"},
+//												{"R", null, null},
+//												{"S", "1", "1"},
+//												{"M", "1", "1"},
+//												{"M", "3", "4"},
+//												{"G", "3", "4"},
+//												{"A", null, null},
+//												};
+//
+//
+//		this.tutorialInstrIndex = -1;
+//		this.instructions.setFont(instructions.getFont().deriveFont(18f));
+//		this.showNextInstruction();
+//
+//		board = new Board(new String[][]
+//				{{"", "", "P", "", "", ""},
+//				{"", "W", "", "", "", ""},
+//				{"", "", "", "", "", ""},
+//				{"P", "", "P", "", "G", ""},
+//				{"P", "", "", "", "", ""},
+//				{"", "", "W", "", "", ""},
+//				});
+//		boardPerceivedByAI = new Board(true, true);
+//
+//		Cell startRoom = board.getRoom(0, 0);
+//		startRoom.setHints();	//custom method to display information about this room on the GUI.
+//		CellAsPerceivedByAI startRoomAI = boardPerceivedByAI.getRoomAI(startRoom.getX(), startRoom.getY());	//startRoomAI is the same location as startRoom
+//		startRoomAI.setExplored(true, startRoom);	//Custom method to set this cell as having been explored by the robot.
+//
+//		/* Every time a room / cell is explored, the AI will use the custom method below to logically deduce and assign
+//		 * the probability of monsters and pits in every neighboring room. See the CellAsPerceivedByAI.java class for more details. */
+//		startRoomAI.assignProbabilityToNeighbors(this.board, this.boardPerceivedByAI);
+//
+//		/* Create two players. Each player can be either a human or AI. */
+//		h1 = new Player(startRoom, startRoomAI, this.p1Name);
+//		h1.setAI(true);	//either or both players can be an AI.
+//		h1.setAggressiveModeOn(false);  //We'll set aggressive mode to OFF for this tutorial
+//		h2 = new Player(startRoom, startRoomAI, this.p2Name);
+//		h2.setAI(true);	//either or both players can be an AI.
+//		h2.setAggressiveModeOn(false);
+//		h2.setOutOfGame(true);	//Player 2 will not be involved for the tutorial
+//
+//		//Manual control, Robot AI automation, or both options enabled
+//		this.controlMode = "B";		//both human manual control and robot AI control enabled for the tutorial
+//
+//		currentPlayer = h1;
+//		currentState = GameState.PLAYING; // mission state: ready to start
+//		currentImageH1 = 0;
+//		currentImageH2 = 0;
+//		for (int i = 0; i < ROWS; i++) {  //hide pictures in all rooms
+//			for (int j = 0; j < COLS; j++){
+//				squares[i][j].setBackground(Color.WHITE);
+//				squares[i][j].hidePics();
+//			}
+//		}
+//		squares[startRoomAI.getX()][startRoomAI.getY()].setBackground(Color.LIGHT_GRAY); //Gray out starting room to indicate it's explored
+//		repaint();
+//	}
 
 	/**
 	 * Method: checkTutorialActionApproved
@@ -516,34 +517,34 @@ public class SAR extends JFrame {
 	 * @param command the given action that the user taking the tutorial tries to take.
 	 * @return true if the action is in accordance with what the tutorial instructs, false otherwise.
 	 */
-	public boolean checkTutorialActionApproved(char command) {
-		//First check which instruction is currently showing in the tutorial
-		//(e.g. is the user asked to move the robot to a certain location? If so,
-		//this will check to see if the user has moved the robot to that location, and then
-		//enable the "Next" button)
-
-//		String commandStr = String.valueOf(command);
-
-		//Base case. The the status checker says there's nothing to do. So any action is automatically not approved.
-		String actionReqd = this.tutorialStatusCheckerArr[tutorialInstrIndex][0];
-		if (actionReqd == null) return false;
-
-		//Now figure out what type of action is required and act accordingly
-		switch(actionReqd) {
-		case "M":	//Move to a specified spot. Only move command will be approved (forward, left, or right)
-			return (command == 'F' || command == 'L' || command == 'R');
-		case "S":	//Shoot towards a specified spot. ON
-			return (command == 'S');
-		case "R":	//rotate to the right
-			return (command == 'R');
-		case "G":	//Give aid while in a specific spot
-			return (command == 'G');
-		case "A":	//Restart tutorial
-			return (command == 'A');
-		}
-
-		return false;	//placeholder
-	}
+//	public boolean checkTutorialActionApproved(char command) {
+//		//First check which instruction is currently showing in the tutorial
+//		//(e.g. is the user asked to move the robot to a certain location? If so,
+//		//this will check to see if the user has moved the robot to that location, and then
+//		//enable the "Next" button)
+//
+////		String commandStr = String.valueOf(command);
+//
+//		//Base case. The the status checker says there's nothing to do. So any action is automatically not approved.
+//		String actionReqd = this.tutorialStatusCheckerArr[tutorialInstrIndex][0];
+//		if (actionReqd == null) return false;
+//
+//		//Now figure out what type of action is required and act accordingly
+//		switch(actionReqd) {
+//		case "M":	//Move to a specified spot. Only move command will be approved (forward, left, or right)
+//			return (command == 'F' || command == 'L' || command == 'R');
+//		case "S":	//Shoot towards a specified spot. ON
+//			return (command == 'S');
+//		case "R":	//rotate to the right
+//			return (command == 'R');
+//		case "G":	//Give aid while in a specific spot
+//			return (command == 'G');
+//		case "A":	//Restart tutorial
+//			return (command == 'A');
+//		}
+//
+//		return false;	//placeholder
+//	}
 
 	/**
 	 * Only used in tutorial mode, after the user has taken some approved action.
@@ -551,73 +552,80 @@ public class SAR extends JFrame {
 	 * This will move the tutorial forward by triggering subsequent action, e.g.
 	 * re-enabling "next" button to allow the user to proceed to the next part of the tutorial
 	 */
-	public void checkTutorialStatus(String command) {
-		//TODO
-		//Base case: if robot has been destroyed, then display game over message and
-		//allow user to restart tutorial
-		if (currentState == GameState.DRAW) {	//this means robot has been killed
-			this.showMissionFailureInstruction();
-			return;
-		}
+//	public void checkTutorialStatus(String command) {
+//		//Base case: if robot has been destroyed, then display game over message and
+//		//allow user to restart tutorial
+//		if (currentState == GameState.DRAW) {	//this means robot has been killed
+//			this.showMissionFailureInstruction();
+//			return;
+//		}
+//
+//		//First, check what the current stage of the tutorial's instructions were.
+//		String[] actionRequested = tutorialStatusCheckerArr[tutorialInstrIndex];
+//		String actionTakenByUser = command;
+//
+//		System.out.println("actionRequested: " + actionRequested[0]);
+//		System.out.println("actionTakenByUser: " + actionTakenByUser);
+//
+//		//Another base case: the action requested doesn't equal the action the user took In this case return immediately
+//		//(only exception is if the action requested is "M" (Move) and the user action was F, R or L. In this case, don't return immediately.)
+//		if (actionRequested[0].equals("M") && !"FLR".contains(actionTakenByUser)) return;
+//		if (!actionRequested[0].equals("M") && !actionRequested[0].equals(actionTakenByUser)) return;
+//
+//		System.out.println("Beginning switch statement...");
+//		switch(actionRequested[0]) {
+//		case "M":
+//			//Will re-enable next button if the user has moved to a specific location
+//			int[] locRequired = {Integer.parseInt(actionRequested[1]), Integer.parseInt(actionRequested[2])};
+//			int locRow = locRequired[0];
+//			int locCol = locRequired[1];
+//			DrawRoom cellReqd = SAR.this.squares[locRow][locCol];
+//			System.out.println(cellReqd);
+//			repaint();
+//			SwingUtilities.invokeLater(new Runnable()
+//		    {
+//		      public void run()
+//		      {
+//		    	  if (cellReqd.pics[2][0].isVisible()) {
+//		    		  btnNext.setEnabled(true);
+//		    		  SAR.this.removeKeyListeners(true); //remove key listeners
+//		    	  }
+//		      }
+//		    });
+//			break;
+//		case "S":
+//			//Immediately remove key listeners and enable buttons (the tutorial is designed so that the robot WILL be facing the correct direction
+//			//and be in the correct location when the user is instructed to use this command.)
+//			btnNext.setEnabled(true);
+//  		  	SAR.this.removeKeyListeners(true); //remove key listeners
+//			break;
+//		case "R":
+//			//Immediately remove key listeners and enable buttons (the tutorial is designed so that the robot WILL be facing the correct direction
+//			//and be in the correct location when the user is instructed to use this command.)
+//			btnNext.setEnabled(true);
+//  		  	SAR.this.removeKeyListeners(true); //remove key listeners
+//			break;
+//		case "G":
+//			//Immediately remove key listeners and enable buttons (the tutorial is designed so that the robot WILL be facing the correct direction
+//			//and be in the correct location when the user is instructed to use this command.)
+//			btnNext.setEnabled(true);
+//  		  	SAR.this.removeKeyListeners(true); //remove key listeners
+//			break;
+//		case "A":
+//			//Immediately remove key listeners and enable buttons (the tutorial is designed so that the robot WILL be facing the correct direction
+//			//and be in the correct location when the user is instructed to use this command.)
+//			btnNext.setEnabled(true);
+//  		  	SAR.this.removeKeyListeners(true); //remove key listeners
+//			break;
+//		}
+//	}
 
-		//First, check what the current stage of the tutorial's instructions were.
-		String[] actionRequested = tutorialStatusCheckerArr[tutorialInstrIndex];
-		String actionTakenByUser = command;
-
-		System.out.println("actionRequested: " + actionRequested[0]);
-		System.out.println("actionTakenByUser: " + actionTakenByUser);
-
-		//Another base case: the action requested doesn't equal the action the user took In this case return immediately
-		//(only exception is if the action requested is "M" (Move) and the user action was F, R or L. In this case, don't return immediately.)
-		if (actionRequested[0].equals("M") && !"FLR".contains(actionTakenByUser)) return;
-		if (!actionRequested[0].equals("M") && !actionRequested[0].equals(actionTakenByUser)) return;
-
-		System.out.println("Beginning switch statement...");
-		switch(actionRequested[0]) {
-		case "M":
-			//Will re-enable next button if the user has moved to a specific location
-			int[] locRequired = {Integer.parseInt(actionRequested[1]), Integer.parseInt(actionRequested[2])};
-			int locRow = locRequired[0];
-			int locCol = locRequired[1];
-			DrawRoom cellReqd = SAR.this.squares[locRow][locCol];
-			System.out.println(cellReqd);
-			repaint();
-			SwingUtilities.invokeLater(new Runnable()
-		    {
-		      public void run()
-		      {
-		    	  if (cellReqd.pics[2][0].isVisible()) {
-		    		  btnNext.setEnabled(true);
-		    		  SAR.this.removeKeyListeners(true); //remove key listeners
-		    	  }
-		      }
-		    });
-			break;
-		case "S":
-			//Immediately remove key listeners and enable buttons (the tutorial is designed so that the robot WILL be facing the correct direction
-			//and be in the correct location when the user is instructed to use this command.)
-			btnNext.setEnabled(true);
-  		  	SAR.this.removeKeyListeners(true); //remove key listeners
-			break;
-		case "R":
-			//Immediately remove key listeners and enable buttons (the tutorial is designed so that the robot WILL be facing the correct direction
-			//and be in the correct location when the user is instructed to use this command.)
-			btnNext.setEnabled(true);
-  		  	SAR.this.removeKeyListeners(true); //remove key listeners
-			break;
-		case "G":
-			//Immediately remove key listeners and enable buttons (the tutorial is designed so that the robot WILL be facing the correct direction
-			//and be in the correct location when the user is instructed to use this command.)
-			btnNext.setEnabled(true);
-  		  	SAR.this.removeKeyListeners(true); //remove key listeners
-			break;
-		case "A":
-			//Immediately remove key listeners and enable buttons (the tutorial is designed so that the robot WILL be facing the correct direction
-			//and be in the correct location when the user is instructed to use this command.)
-			btnNext.setEnabled(true);
-  		  	SAR.this.removeKeyListeners(true); //remove key listeners
-			break;
-		}
+	/**
+	 * Method: initNumOfMoves
+	 * Resets the counter that tracks the no. of moves the robot has made so far
+	 */
+	protected void initNumOfMoves() {
+		this.numOfMoves = 0;
 	}
 
 	/**
@@ -625,11 +633,13 @@ public class SAR extends JFrame {
 	 * Initialize the mission map contents and status.
 	 * */
 	public void initMission() {
+		//Begin by creating a random board.
 		/* 1st parameter: is the cell at (0,0) always empty?
 		 * 2nd parameter: will this board be accessed by the AI?
 		 * See the constructor comments in Board.java for more details. */
 //		board = new Board(this.options.toUpperCase().contains("00") ? true : false, false);
-		this.numOfMoves = 0;
+
+		initNumOfMoves();	//reset counter
 
 		//TODO OPTIONAL: instead of spawning a random board, we can customize
 		//our own board! Just un-comment any of the below boards or paste your own!
@@ -729,19 +739,85 @@ public class SAR extends JFrame {
 
 		/* Initialize the cell in which the players will start the mission. */
 		Cell startRoom;
+		CellAsPerceivedByAI startRoomAI;
+		Cell[] startRooms = this.setStartRoomAndBoardAI(this.options.toUpperCase().contains("00"));
+		startRoom = startRooms[0];
+		startRoomAI = (CellAsPerceivedByAI)startRooms[1];
+//		/* If end-user typed a string containing "00", the starting cell is always (0,0).*/
+//		if(this.options.toUpperCase().contains("00")) {
+//			startRoom = board.getRoom(0, 0);
+//
+//			/* Now create a board with incomplete information that will be perceived / accessed by the AI
+//			 * who will use deductive logic to navigate the board and avoid dangers.
+//			 * 1st parameter: is cell at (0,0) always empty?
+//			 * 2nd parameter: will this board be accessed / perceived by the AI? */
+//			boardPerceivedByAI = new Board(true, true);
+//		}
+//		else {
+//			//The players start the mission at a RANDOM position on the board
+//			startRoom = board.getRoom((int)(Math.random() * ROWS), (int)(Math.random() * COLS));
+//
+//			/*If players start on a random cell, that cell might already have
+//			 * a pit or victim or wastes in it. Meaning the mission is over before it even begins...which we don't want.
+//			 * So this while-loop is designed to ensure that the random starting cell is safe AND
+//			 * that it doesn't have the victim in it. */
+//			while(startRoom.hasWastes() || startRoom.isPit() || startRoom.hasVictim()) {
+//				startRoom = board.getRoom((int)(Math.random() * ROWS), (int)(Math.random() * COLS));
+//			}
+//
+//			/* Create a board with incomplete information that will be perceived / accessed by the AI player
+//			 * who will use deductive logic to navigate the board and avoid dangers.
+//			 * 1st parameter: is cell at (0,0) always empty?
+//			 * 2nd parameter: will this board be accessed / perceived by the AI? */
+//			boardPerceivedByAI = new Board(false, true);
+//		}
+//
+//		startRoom.setHints();	//custom method to display information about this room on the GUI.
+//
+//		CellAsPerceivedByAI startRoomAI = boardPerceivedByAI.getRoomAI(startRoom.getX(), startRoom.getY());	//startRoomAI is the same location as startRoom
+//		startRoomAI.setExplored(true, startRoom);	//Custom method to set this cell as having been explored by the robot.
+//
+//		/* Every time a room / cell is explored, the AI will use the custom method below to logically deduce and assign
+//		 * the probability of monsters and pits in every neighboring room. See the CellAsPerceivedByAI.java class for more details. */
+//		startRoomAI.assignProbabilityToNeighbors(this.board, this.boardPerceivedByAI);
 
-		/* If end-user typed a string containing "00", the starting cell is always (0,0).*/
-		if(this.options.toUpperCase().contains("00")) {
-			startRoom = board.getRoom(0, 0);
+		this.createPlayers(startRoom, startRoomAI, this.p1Name, this.p2Name,
+				this.options.toUpperCase().contains("A1"), this.options.toUpperCase().contains("A2"), this.options.toUpperCase().contains("S"),
+				this.options.toUpperCase().contains("H") ? "H" : this.options.toUpperCase().contains("R") ? "R" : "B");	//create players
 
-			/* Now create a board with incomplete information that will be perceived / accessed by the AI
-			 * who will use deductive logic to navigate the board and avoid dangers.
-			 * 1st parameter: is cell at (0,0) always empty?
-			 * 2nd parameter: will this board be accessed / perceived by the AI? */
-			boardPerceivedByAI = new Board(true, true);
+		this.hideAllPics();
+		greyOutCell(startRoomAI.getX(), startRoomAI.getY());
+		repaint();
+	}
+
+	/**
+	 * Method: greyOutCell
+	 * Greys out indicated cell (means it's been explored)
+	 * @param x
+	 * @param y
+	 */
+	protected void greyOutCell(int x, int y) {
+		squares[x][y].setBackground(Color.LIGHT_GRAY);
+	}
+
+	/**
+	 * Method: hideAllPics
+	 * Hides pictures in all rooms. Usually invoked when a game is being initialized
+	 */
+	protected void hideAllPics() {
+		for (int i = 0; i < ROWS; i++) {  //hide pictures in all rooms
+			for (int j = 0; j < COLS; j++){
+				squares[i][j].setBackground(Color.WHITE);
+				squares[i][j].hidePics();
+			}
 		}
-		else {
-			//The players start the mission at a RANDOM position on the board
+	}
+
+	protected Cell[] setStartRoomAndBoardAI(boolean startRoomIs00) {
+		Cell startRoom;
+		if (startRoomIs00) {
+			startRoom = board.getRoom(0, 0);
+		} else {
 			startRoom = board.getRoom((int)(Math.random() * ROWS), (int)(Math.random() * COLS));
 
 			/*If players start on a random cell, that cell might already have
@@ -751,13 +827,12 @@ public class SAR extends JFrame {
 			while(startRoom.hasWastes() || startRoom.isPit() || startRoom.hasVictim()) {
 				startRoom = board.getRoom((int)(Math.random() * ROWS), (int)(Math.random() * COLS));
 			}
-
-			/* Create a board with incomplete information that will be perceived / accessed by the AI player
-			 * who will use deductive logic to navigate the board and avoid dangers.
-			 * 1st parameter: is cell at (0,0) always empty?
-			 * 2nd parameter: will this board be accessed / perceived by the AI? */
-			boardPerceivedByAI = new Board(false, true);
 		}
+		/* Now create a board with incomplete information that will be perceived / accessed by the AI
+		 * who will use deductive logic to navigate the board and avoid dangers.
+		 * 1st parameter: is cell at (0,0) always empty?
+		 * 2nd parameter: will this board be accessed / perceived by the AI? */
+		boardPerceivedByAI = new Board(startRoomIs00, true);
 
 		startRoom.setHints();	//custom method to display information about this room on the GUI.
 
@@ -767,56 +842,41 @@ public class SAR extends JFrame {
 		/* Every time a room / cell is explored, the AI will use the custom method below to logically deduce and assign
 		 * the probability of monsters and pits in every neighboring room. See the CellAsPerceivedByAI.java class for more details. */
 		startRoomAI.assignProbabilityToNeighbors(this.board, this.boardPerceivedByAI);
-
-		this.createPlayers(startRoom, startRoomAI);	//create players
-
-		for (int i = 0; i < ROWS; i++) {  //hide pictures in all rooms
-			for (int j = 0; j < COLS; j++){
-				squares[i][j].setBackground(Color.WHITE);
-				squares[i][j].hidePics();
-			}
-		}
-		squares[startRoomAI.getX()][startRoomAI.getY()].setBackground(Color.LIGHT_GRAY); //Gray out starting room to indicate it's explored
-		repaint();
+		return new Cell[]{startRoom, startRoomAI};
 	}
-
 
 	/**
 	 * Method: createPlayers
-	 * Creates two players, h1 and h2.
 	 * @param startRoom the room where the players will start the mission.
 	 * @param startRoomAI the room where the players will start the mission. This is a CellAsPerceivedByAI object and will be accessed by AI player
+	 * @param p1Name player 1 name
+	 * @param p2Name player 2 name
+	 * @param aggressivep1 whether p1 is set to aggressive mode
+	 * @param aggressivep2 whether p2 is set to aggressive mode
+	 * @param singlePlayer whether this is a single player game
+	 * @param controlMode  "H" for human manual control only, "R" for robot AI mode only, or "B" for both options enabled
 	 */
-	public void createPlayers(Cell startRoom, CellAsPerceivedByAI startRoomAI) {
+	public void createPlayers(Cell startRoom, CellAsPerceivedByAI startRoomAI,
+							  String p1Name, String p2Name,
+							  boolean aggressivep1, boolean aggressivep2, boolean singlePlayer,
+							  String controlMode) {
 
 		/* Create two players. Each player can be either a human or AI. */
-		h1 = new Player(startRoom, startRoomAI, this.p1Name);
+		h1 = new Player(startRoom, startRoomAI, p1Name);
 		h1.setAI(true);	//either or both players can be an AI.
-		h1.setAggressiveModeOn(this.options.toUpperCase().contains("A1") ? true : false);//this can be toggled on or off. See comments in the Player class beginning with "DESIGN DECISION".
-		h2 = new Player(startRoom, startRoomAI, this.p2Name);
+		h1.setAggressiveModeOn(aggressivep1);//this can be toggled on or off. See comments in the Player class beginning with "DESIGN DECISION".
+		h2 = new Player(startRoom, startRoomAI, p2Name);
 		h2.setAI(true);	//either or both players can be an AI.
-		h2.setAggressiveModeOn(this.options.toUpperCase().contains("A2") ? true : false);//this can be toggled on or off. See comments in the Player class beginning with "DESIGN DECISION".
+		h2.setAggressiveModeOn(aggressivep2);//this can be toggled on or off. See comments in the Player class beginning with "DESIGN DECISION".
 
 		/* OPTIONAL: if you want a 1-player mission, have the other player quit right away.
 		 * This gets rid of player's graphics from being shown on the GUI. */
-		if(this.options.toUpperCase().contains("S")) {
+		if(singlePlayer) {
 			h2.setOutOfGame(true);
 		}
-
-		//Manual control, Robot AI automation, or both options enabled
-
-		if (this.options.toUpperCase().contains("H")) {
-			this.controlMode = "H";		//human manual control only
-		} else if (this.options.toUpperCase().contains("R")) {
-			this.controlMode = "R";		//robot only
-		} else {		// options contains "B"
-			this.controlMode = "B";		//both modes enabled
-		}
-
+		this.controlMode = controlMode;
 		currentPlayer = h1;       //h1 plays first by default. Can be changed to h2 if you want
-
 		currentState = GameState.PLAYING; // mission state: ready to start
-
 		currentImageH1 = 0;
 		currentImageH2 = 0;
 	}
@@ -938,7 +998,8 @@ public class SAR extends JFrame {
 				/* For every room that has been explored, refresh the perceptions via the setExplored() method
 				 * and refresh the AI's probability calculation of neighboring rooms' risks. */
 				if(tempR.isExplored()) {
-					squares[i][j].setBackground(Color.LIGHT_GRAY);	//gray out explored room
+					this.greyOutCell(i, j);
+//					squares[i][j].setBackground(Color.LIGHT_GRAY);	//gray out explored room
 					tempR.setExplored(true, this.board.getRoom(i, j));
 					tempR.assignProbabilityToNeighbors(this.board, this.boardPerceivedByAI);
 				}
@@ -963,10 +1024,10 @@ public class SAR extends JFrame {
 		if (hasWon(currentPlayer)) {  // check for mission success
 			currentState = (currentPlayer == h1) ? GameState.H1_WON : GameState.H2_WON;
 			(new PopupThread()).start();	//Popup message game over, needs to run in new thread for thread safety
-			if (options.contains("T")) this.checkTutorialStatus(String.valueOf(command));	//If this was a tutorial mode, update tutorial status
+			if (options.contains("T")) tutorial.checkTutorialStatus(String.valueOf(command));	//If this was a tutorial mode, update tutorial status
 		} else if (isDraw()) {  // if "draw", it means neither player 1 nor 2 (if in 2-player mode) has found the victim and are both dead. Mission fail
 			currentState = GameState.DRAW;
-			if (options.contains("T")) this.checkTutorialStatus(String.valueOf(command));	//If this was a tutorial mode, update tutorial status
+			if (options.contains("T")) tutorial.checkTutorialStatus(String.valueOf(command));	//If this was a tutorial mode, update tutorial status
 			else (new PopupThread()).start();	//Popup message game over, needs to run in new thread for thread safety
 		}
 		// Otherwise, no change to current state (still GameState.PLAYING).
@@ -1113,7 +1174,7 @@ public class SAR extends JFrame {
 						//If this is tutorial mode, check status first to see if this action should be allowed at all.
 						//If not approved, end this method immediately
 						if (SAR.this.options.contains("T")) {
-							boolean actionApproved = SAR.this.checkTutorialActionApproved(command);
+							boolean actionApproved = tutorial.checkTutorialActionApproved(command);
 							if (!actionApproved) return;
 						}
 
@@ -1138,11 +1199,12 @@ public class SAR extends JFrame {
 						//If we're in tutorial mode, we need to check to see
 						//if user has completed what the tutorial asked them to do
 						if (SAR.this.options.contains("T")) {
-							checkTutorialStatus(String.valueOf(command));
+							tutorial.checkTutorialStatus(String.valueOf(command));
 						}
 					} else if (Character.toUpperCase(command) == 'A') {       // this command can be used when mission is over to restart mission
 						if (SAR.this.options.contains("T")) {
-							initTutorial();	//If this was a tutorial mode, restart the same tutorial
+//							initTutorial();	//If this was a tutorial mode, restart the same tutorial
+							tutorial = new Tutorial(SAR.this);
 							return;
 						}
 						else initMission();									//otherwise, initialize mission again
