@@ -38,7 +38,9 @@ public class InstructionMsg {
 
 	public static String[] TUTORIAL = {
 						"Before beginning the actual mission, you should learn how to control the robot.\n"
-					  + "Let's begin the tutorial and complete a practice mission together.",
+					  + "Let's begin the tutorial and complete a practice mission together.\n\n"
+					  + "NOTE: We recommend that you maximize this window before continuing.\n\n"
+					  + "Press NEXT when you are ready.",
 
 						"To the left, you see the map of the area the robot will need to traverse\n"
 					  + "in search of Nissa.",
@@ -187,7 +189,7 @@ public class InstructionMsg {
 
 		    "The robot is equipped with an AI mode that can reason about its\n"
 		  + "immediate surroundings and, based on the temperature and smoke sensor readings,\n"
-		  + "assess the risks of danger in adjacent area, choosing its next move\n"
+		  + "assess the risks of danger in adjacent areas, choosing its next move\n"
 		  + "via an algorithm that attempts to minimize the risk of harm to the robot\n"
 		  + "while continuing to explore new areas.",
 

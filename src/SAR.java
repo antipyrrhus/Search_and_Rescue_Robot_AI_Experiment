@@ -164,8 +164,8 @@ public class SAR extends JFrame {
 
 
 		if (this.options.contains("T")) {	//tutorial mode
-//			this.initTutorial();	//enable this later once debugging complete
-			this.initFinalMission();
+			this.initTutorial();	//enable this later once debugging complete
+//			this.initFinalMission();
 		} else {							//non-tutorial mode
 
 			// Setup the instruction area (JTextArea)
