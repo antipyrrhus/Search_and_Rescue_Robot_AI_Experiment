@@ -6,21 +6,21 @@ import javax.swing.SwingUtilities;
  *  Course:
  *  Written / Updated: Nov 22, 2016
  *
- *  This Class -
+ *  This Class - the Tutorial class. Used for tutorial mode.
  *  Purpose -
  */
 public class Tutorial {
+	private SAR sar;
 	private String[] tutorialStrArr;
-	private int totalPagesOfTutorial;
-	private int currentPage;
-
+	private int totalPagesOfTutorial, currentPage;
+	private int tutorialInstrIndex;
 	private boolean[] tutorialEnableBtnArr;
 	private String[][] tutorialStatusCheckerArr;
 
-	private int tutorialInstrIndex;
-
-	private SAR sar;
-
+	/**
+	 * Constructor
+	 * @param sar a SAR.java object
+	 */
 	public Tutorial(SAR sar) {
 		this.sar = sar;
 		tutorialStrArr = InstructionMsg.TUTORIAL;
@@ -34,12 +34,10 @@ public class Tutorial {
 		sar.initNumOfMoves();		//set counter to zero (this counts the no. of moves the robot has taken thus far)
 
 		//make next button and page no. information visible
-		sar.enableBtnNext();
-		sar.enablePageNo();
-
+		sar.setBtnNextVisible(true);
+		sar.setPageNoVisible(true);
 
 		sar.removeKeyListeners(true);	//temporarily disable keyboard command listeners
-
 		sar.setInstrRowCol(3, 50);	//set the dimension of the instruction text area
 
 		//Buttons will be disabled or enabled during various points of the tutorial, as follows.
@@ -102,7 +100,7 @@ public class Tutorial {
 
 
 		this.tutorialInstrIndex = -1;
-		sar.instructions.setFont(sar.instructions.getFont().deriveFont(18f));
+		sar.instrSetFont(sar.instructions.getFont().deriveFont(18f));
 
 		//Create custom board for tutorial.
 		sar.board = new Board(new String[][]
@@ -120,18 +118,6 @@ public class Tutorial {
 		startRoom = startRooms[0];
 		startRoomAI = (CellAsPerceivedByAI)startRooms[1];
 
-//		sar.setStartRoomAndBoardAI(true);
-//		sar.boardPerceivedByAI = new Board(true, true);
-
-//		Cell startRoom = sar.board.getRoom(0, 0);
-//		startRoom.setHints();	//custom method to display information about this room on the GUI.
-//		CellAsPerceivedByAI startRoomAI = sar.boardPerceivedByAI.getRoomAI(startRoom.getX(), startRoom.getY());	//startRoomAI is the same location as startRoom
-//		startRoomAI.setExplored(true, startRoom);	//Custom method to set this cell as having been explored by the robot.
-
-		/* Every time a room / cell is explored, the AI will use the custom method below to logically deduce and assign
-		 * the probability of monsters and pits in every neighboring room. See the CellAsPerceivedByAI.java class for more details. */
-//		startRoomAI.assignProbabilityToNeighbors(sar.board, sar.boardPerceivedByAI);
-
 		sar.createPlayers(startRoom, startRoomAI, sar.p1Name, sar.p2Name, false, false, true, "H");
 
 		sar.hideAllPics();
@@ -147,10 +133,11 @@ public class Tutorial {
 	 */
 	protected void showNextInstruction() {
 		//Base case. If the mission ended in success (2nd-to last element in the tutorialStrArr array)
-		//then we will go on to the next stage of the tutorial instead of showing the last element in the array,
-		//which is a mission failed message.
+		//then we will go on to the next stage of the tutorial instead of showing the last element in the array
+		//(which is a mission failed message).
 		if (tutorialInstrIndex == tutorialStrArr.length - 2) {
-			new PracticeDrillHuman(this.sar);
+			sar.recordStats(this);
+			sar.initDrillHuman();
 			return;
 		}
 
@@ -161,9 +148,8 @@ public class Tutorial {
 		}
 
 		tutorialInstrIndex++;
-		System.out.println("TutorialInstrIndex: " + tutorialInstrIndex);
-		sar.instructions.setText(tutorialStrArr[tutorialInstrIndex]);
-		sar.btnNext.setEnabled(this.tutorialEnableBtnArr[tutorialInstrIndex]);
+		sar.setInstrText(tutorialStrArr[tutorialInstrIndex]);
+		sar.enableBtnNext(this.tutorialEnableBtnArr[tutorialInstrIndex]);
 		this.removeKeyListeners(sar.btnNext.isEnabled());
 		this.currentPage++;
 		this.setPageNo(currentPage);
@@ -178,30 +164,15 @@ public class Tutorial {
 	 */
 	protected void showMissionFailureInstruction() {
 		tutorialInstrIndex = tutorialStrArr.length - 1;
-		sar.instructions.setText(tutorialStrArr[tutorialInstrIndex]);
-		sar.btnNext.setEnabled(false);	//disable next button since game over
+		sar.setInstrText(tutorialStrArr[tutorialInstrIndex]);
+		sar.enableBtnNext(false);	//disable next button since game over
 		this.removeKeyListeners(false);	//do not remove (aka, add back) key listeners to allow user to restart
 		this.currentPage = totalPagesOfTutorial;
 		setPageNo(currentPage);
 	}
 
-//	protected void showPrevInstruction() {
-//		tutorialInstrIndex = Math.max(0, tutorialInstrIndex - 1);
-//		System.out.println(tutorialInstrIndex);
-//		instructions.setText(tutorialStrArr[tutorialInstrIndex]);
-//		btnNext.setEnabled(this.tutorialEnableBtnArr[tutorialInstrIndex]);
-//		removeKeyListeners(btnNext.isEnabled());
-//	}
-
 	protected void removeKeyListeners(boolean b) {
-		if (b == true) {
-			sar.canvas.removeKeyListeners();
-			System.out.println("key listeners removed");
-		} else {
-			sar.canvas.removeKeyListeners(); //first reset all listeners before adding them (this is to prevent duplicate key listeners
-			sar.canvas.addKeyListeners();
-			System.out.println("key listeners added");
-		}
+		sar.removeKeyListeners(b);
 	}
 
 
@@ -248,7 +219,6 @@ public class Tutorial {
 	 * re-enabling "next" button to allow the user to proceed to the next part of the tutorial
 	 */
 	public void checkTutorialStatus(String command) {
-		//TODO
 		//Base case: if robot has been destroyed, then display game over message and
 		//allow user to restart tutorial
 		if (sar.currentState == SAR.GameState.DRAW) {	//this means robot has been killed
@@ -283,7 +253,7 @@ public class Tutorial {
 		      public void run()
 		      {
 		    	  if (cellReqd.pics[2][0].isVisible()) {
-		    		  sar.btnNext.setEnabled(true);
+		    		  sar.enableBtnNext(true);
 		    		  removeKeyListeners(true); //remove key listeners
 		    	  }
 		      }
@@ -292,25 +262,25 @@ public class Tutorial {
 		case "S":
 			//Immediately remove key listeners and enable buttons (the tutorial is designed so that the robot WILL be facing the correct direction
 			//and be in the correct location when the user is instructed to use this command.)
-			sar.btnNext.setEnabled(true);
+			sar.enableBtnNext(true);
   		  	removeKeyListeners(true); //remove key listeners
 			break;
 		case "R":
 			//Immediately remove key listeners and enable buttons (the tutorial is designed so that the robot WILL be facing the correct direction
 			//and be in the correct location when the user is instructed to use this command.)
-			sar.btnNext.setEnabled(true);
+			sar.enableBtnNext(true);
   		  	removeKeyListeners(true); //remove key listeners
 			break;
 		case "G":
 			//Immediately remove key listeners and enable buttons (the tutorial is designed so that the robot WILL be facing the correct direction
 			//and be in the correct location when the user is instructed to use this command.)
-			sar.btnNext.setEnabled(true);
+			sar.enableBtnNext(true);
   		  	removeKeyListeners(true); //remove key listeners
 			break;
 		case "A":
 			//Immediately remove key listeners and enable buttons (the tutorial is designed so that the robot WILL be facing the correct direction
 			//and be in the correct location when the user is instructed to use this command.)
-			sar.btnNext.setEnabled(true);
+			sar.enableBtnNext(true);
   		  	removeKeyListeners(true); //remove key listeners
 			break;
 		}

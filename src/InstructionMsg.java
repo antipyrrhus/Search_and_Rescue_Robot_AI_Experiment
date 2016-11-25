@@ -41,7 +41,7 @@ public class InstructionMsg {
 					  + "Let's begin the tutorial and complete a practice mission together.",
 
 						"To the left, you see the map of the area the robot will need to traverse\n"
-					  + "in search of the victim.",
+					  + "in search of Nissa.",
 
 					    "The robot is represented by the circular-shaped object.",
 
@@ -119,9 +119,9 @@ public class InstructionMsg {
 					  + "Since fire pits must be avoided, and we would prefer not to take that risk,\n"
 					  + "it may be safer to go back one step north and decontaminate the chemicals which\n"
 					  + "we know resides in the grid at the second row and second column.\n"
-					  + "Go ahead and move north, then press Next to continue.",
+					  + "Go ahead and move back north, then press Next to continue.",
 
-					  	"Now have the robot rotate to the east by pressing the RIGHT arrow key,\n"
+					  	"Now have the robot rotate to its right by pressing the RIGHT arrow key,\n"
 					  + "then press Next to continue.",
 
 					  	"OK. Go ahead and press S now to fire the decontaminant shot, then press Next.",
@@ -136,15 +136,15 @@ public class InstructionMsg {
 					  + "- LEFT and RIGHT arrow keys to rotate the robot in-place,\n"
 					  + "- S to shoot decontaminant spray towards an adjacent grid in the direction\n"
 					  + "  the robot is currently facing (provided the robot has shots left),\n"
-					  + "- G to give aid to the victim once found.\n\n"
+					  + "- G to give aid to Nissa once found.\n\n"
 					  + "- Avoid grids containing fire pits.\n"
 					  + "- Either avoid or decontaminate grids containing radioactive wastes.\n"
 					  + "  (since the robot is out of decontaminants now, it must avoid these grids.)\n\n"
 					  + "Continue exploring the area on your own, using your best judgment.\n"
-					  + "The person in need of rescue is somewhere in this area.\n"
-					  + "Once the person is discovered, the Next button will be enabled.",
+					  + "Remember, Nissa is somewhere in this area.\n"
+					  + "Once Nissa is discovered, the Next button will be enabled.",
 
-					    "You have located the victim! Well done.\n"
+					    "You have located Nissa! Well done.\n"
 					  + "Press G to give emergency aid and finish the mission successfully.",
 
 					  	"The robot has been destroyed, and the mission is a failure.\n"
@@ -155,36 +155,106 @@ public class InstructionMsg {
 	public static String[] DRILL_HUMAN = {
 				"Now that you've successfully completed the tutorial,\n"
 			  + "you will get one more practice drill on a different environment.\n"
-			  + "The location of the victim, as well as that of fire pits\n"
-			  + "and radioactive wastes, has been changed for this drill.\n\n"
+			  + "The locations of Nissa, fire pits and radioactive wastes\n"
+			  + "have all been changed for this drill.\n\n"
 			  + "You will be completely on your own this time, though\n"
 			  + "the next page will provide helpful reminders on keyboard commands.\n\n"
 			  + "You will get only one chance to complete the mission,\n"
-			  + "which will end either once you locate the victim and press G to give aid,\n"
+			  + "which will end either once you locate Nissa and press G to give aid,\n"
 			  + "or once the robot is destroyed and the mission fails.\n\n"
 			  + "Press Next when you are ready to begin.\n",
 
 			    "Robot moves:\n" +
 				"- LEFT and RIGHT arrow keys to rotate left and right.\n" +
+			    "- SHIFT to move in the direction the robot is facing.\n" +
 				"- 'S' to shoot decontaminants towards an adjacent grid which the robot is facing.\n" +
-				"  (Note: the robot only has two rounds of shots, so use them judiciously)" +
-				"- 'G' to give aid to the victim once located (successfully ends the mission).\n\n" +
+				"  (Note: the robot only has two rounds of shots, so use them judiciously)\n" +
+				"- 'G' to give aid to Nissa once located (successfully ends the mission).\n\n" +
 				"Robot Sensors can detect the following environmental cues: \n"+
 				"1. Heightened temperature reading (indicated by a thermometer icon) in grids\n" +
 				"   adjacent to that containing a fire pit. Fire pits must be avoided.\n"+
 				"2. Smoke reading in grids adjacent to that containing radioactive wastes.\n" +
 				"   Wastes must be either avoided or cleaned via shooting decontaminants.\n" +
-				"3. Once the robot locates the victim, the victim's icon is displayed. Pressing G will end the mission.\n\n" +
-				"The environment contains:\n"+
-				"1. One dislocated victim,\n"+
-				"2. Two grids that contain radioactive wastes,\n" +
-				"3. Estimated 10% of the grids may contain fire pits.\n\n"+
-				"Equipment: The robot is equipped with two shots of anti-radioactive decontaminants.\n\n" +
-				"Other Notes:\n"+
-				"1. The robot is destroyed if it is in the square with a fire pit.\n"+
-				"2. The robot is destroyed if it is in the square with active radioactive wastes.\n"+
-				"3. Shooting decontaminants toward a direction the robot is facing\n"+
-				"   will disable radioactive wastes (if any) in the adjacent grid, and\n"+
-				"   an icon (signifying disinfection) will be displayed."
+				"3. Once the robot locates Nissa, her icon is displayed.\n"
+			  + "   Pressing G will end the mission.",
+
+				"The drill is over. Press NEXT to continue."
 	};
+
+	public static String[] DRILL_AI = {
+			"For this next (and final) drill before the actual mission,\n"
+		  + "you will observe the robot AI attempt the same drill you just attempted.",
+
+		    "The robot is equipped with an AI mode that can reason about its\n"
+		  + "immediate surroundings and, based on the temperature and smoke sensor readings,\n"
+		  + "assess the risks of danger in adjacent area, choosing its next move\n"
+		  + "via an algorithm that attempts to minimize the risk of harm to the robot\n"
+		  + "while continuing to explore new areas.",
+
+		    "Essentially, the robot's AI has the same goal as you do:\n"
+		  + "to locate Nissa as safely and quickly as possible.",
+
+		    "The AI algorithm is still in an experimental phase, and we need you to\n"
+		  + "help assess its performance.",
+
+		    "Manual control of the robot has been disabled for this drill. Instead,\n"
+		  + "a new control scheme (SPACEBAR) has been enabled that triggers the AI.",
+
+		    "Tapping SPACEBAR will activate the AI for a single move. That is,\n"
+		  + "the robot will autonomously make a decision as to what it should do next,\n"
+		  + "and will either rotate, move in the direction it is facing, shoot decontaminants,\n"
+		  + "or give aid to Nissa once found.",
+
+		    "Starting on the next screen, the drill will begin.\n\n"
+		  + "Once it does, you should keep tapping the SPACEBAR key at a slow and steady pace\n"
+		  + "(e.g. once every few seconds or so).\n\n"
+		  + "At the same time, you should be carefully observing the decisions\n"
+		  + "that the robot's AI makes every step along the way, and assess\n"
+		  + "whether you think the AI has made the right decision at each step,\n"
+		  + "as well as whether you would have done anything differently.\n\n"
+		  + "Press NEXT to begin.",
+
+		    "Keep on tapping SPACEBAR at a slow and steady pace, and carefully observe\n"
+		  + "the robot AI making its decisions each step.\n\n"
+		  + "(NOTE: the robot has no more knowledge of the environment than you do, and\n"
+		  + "depends solely on its temperature and smoke sensors to inform its decisions.\n"
+		  + "As such, it is possible that the robot may fail this drill.)",
+
+		    "The drill is over. Press NEXT to move on to the actual mission."
+	};
+
+	public static String[] FINAL_MISSION = {
+		  "It is now time to begin the real mission.\n"
+		+ "You (and the robot) have one chance only to locate and save Nissa.\n"
+		+ "It is strongly advised that you refrain from taking unnecessary risks.",
+
+		  "You have the full suite of controls at your disposal for this mission:\n\n"
+		+ "- Manual mode (LEFT/RIGHT arrow keys to rotate, SHIFT to move, S to shoot,\n"
+		+ "  G to give aid)\n"
+	    + "- AI mode (SPACEBAR to trigger AI mode for a single move)",
+
+	      "You may elect to manually control the robot for the entire mission, or\n"
+	    + "you may press SPACEBAR to delegate the control task to the AI for one turn.\n"
+	    + "(you can use SPACEBAR as many times as you wish)\n\n"
+	    + "Whether you choose to control the robot manually, or rely entirely on the AI,\n"
+	    + "or a combination of both, we will leave to your best judgment.\n\n"
+	    + "Press NEXT when you are ready to begin.",
+
+	      "As a reminder, here are the essential controls again:\n\n"
+	    + "LEFT/RIGHT arrows to rotate the robot,\n"
+	    + "SHIFT to move in the direction the robot is facing,\n"
+	    + "S to shoot decontaminants (remember the robot only has two shots),\n"
+	    + "G to give aid to Nissa once located (this ends the mission),\n"
+	    + "SPACEBAR to enable AI for a single move.\n\n"
+	    + "Good luck.",
+
+	    "The mission is over. Please press NEXT to continue."
+	};
+
+	public static String FINAL_MESSAGE = "Thank you for completing the experiment.\n\n"
+			                           + "IMPORTANT: In order to get credit for your participation,\n"
+			                           + "please copy the code provided below and save it, as\n"
+			                           + "you will be asked to provide the code at the end of the survey.\n\n"
+			                           + "Once you have copied the code below, close this window\n"
+			                           + "and return to the mturk survey.";
 }
