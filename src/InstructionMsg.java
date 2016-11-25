@@ -40,7 +40,7 @@ public class InstructionMsg {
 						"Before beginning the actual mission, you should learn how to control the robot.\n"
 					  + "Let's begin the tutorial and complete a practice mission together.\n\n"
 					  + "NOTE: We recommend that you maximize this window before continuing.\n\n"
-					  + "Press NEXT when you are ready.",
+					  + "Press the 'Next' button below when you are ready.",
 
 						"To the left, you see the map of the area the robot will need to traverse\n"
 					  + "in search of Nissa.",
@@ -93,7 +93,7 @@ public class InstructionMsg {
 					  + "If the robot uses up the decontaminants too early, it may be in trouble later\n"
 					  + "when it really needs them.",
 
-					    "To use the decontaminants, we can the robot face the direction of the grid\n"
+					    "To use the decontaminants, we can have the robot face the direction of the grid\n"
 					  + "which is believed to be infected with radioactive chemicals.",
 
 					    "Since we don't know whether the grid to the south or east is infected,\n"
@@ -147,7 +147,8 @@ public class InstructionMsg {
 					  + "Once Nissa is discovered, the Next button will be enabled.",
 
 					    "You have located Nissa! Well done.\n"
-					  + "Press G to give emergency aid and finish the mission successfully.",
+					  + "Press G to give emergency aid and finish the mission successfully,\n"
+					  + "then press Next to continue.",
 
 					  	"The robot has been destroyed, and the mission is a failure.\n"
 					  + "Fortunately, this was a practice mission. Press A to start the tutorial again."

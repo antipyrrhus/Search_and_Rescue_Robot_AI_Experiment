@@ -74,6 +74,7 @@ public class SAR extends JFrame {
 	//Core stats to be saved for the experiment
 	protected int numOfMoves;				//Total number of moves the robot took in a mission
 	protected int numOfTimesAITriggered;	//Total no. of times the human subject triggered the robot AI during the final mission.
+	protected boolean missionIsSuccess;
 	private static String code = "";		//This is the code that will contain core stats re: the experiment
 
 	/**
@@ -192,11 +193,11 @@ public class SAR extends JFrame {
 		if (o instanceof Tutorial) {
 			//nothing to record for the tutorial stage
 		} else if (o instanceof PracticeDrillHuman) {
-			SAR.code += "PDH" + String.valueOf(this.numOfMoves);
+			SAR.code += "PDH" + String.valueOf(this.numOfMoves) + (currentState == GameState.H1_WON ? "S" : "F");
 		} else if (o instanceof PracticeDrillAI) {
-			SAR.code += "A" + String.valueOf(this.numOfMoves);
+			SAR.code += "A" + String.valueOf(this.numOfMoves) + (currentState == GameState.H1_WON ? "S" : "F");
 		} else if (o instanceof FinalMission) {
-			SAR.code += "FM" + String.valueOf(this.numOfMoves) + "T" + String.valueOf(this.numOfTimesAITriggered);
+			SAR.code += "M" + String.valueOf(this.numOfMoves) + "T" + String.valueOf(this.numOfTimesAITriggered) + (currentState == GameState.H1_WON ? "S" : "F");
 		}
 	}
 
