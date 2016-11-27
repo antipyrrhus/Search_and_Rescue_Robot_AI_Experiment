@@ -36,6 +36,60 @@ public class InstructionMsg {
 			"   will disable radioactive wastes (if any) in the adjacent grid, and\n"+
 			"   an icon (signifying disinfection) will be displayed.";
 
+	public static String[] INTRO = {
+			"Thank you for participating in our Human-Robot Interaction (HRI) experiment.\n\n"
+		  + "In this experiment, you will control a robot avatar in the context of a simulated\n"
+		  + "urban disaster recovery scenario, otherwise known as Urban Search and Rescue (USAR).\n\n"
+		  + "For better visibility, we recommend that you maximize this window before continuing.\n\n"
+		  + "Press the 'Next' button below for a description of the rescue scenario.",
+
+		    "SCENARIO\n\n"
+		  + "Be sure to read the following scenario carefully.\n\n"
+		  + "A nuclear facility located in the outskirts of a U.S. territory has just experienced\n"
+		  + "a catastrophic system failure, resulting in core melt accident (i.e. nuclear meltdown).\n"
+		  + "As a result, the facility has been partially destroyed.\n\n"
+		  + "Due to severe overheating and the venting of contaminated steam resulting in\n"
+		  + "the presence of radioactive materials, it is unsafe for any person to remain within\n"
+		  + "the facility's perimeters.\n\n"
+		  + "The employees at the facility have largely managed to evacuate, but at present\n"
+		  + "we know of one female by the name of Nissa Clark who is still inside.\n\n"
+		  + "It is believed that she may be unconscious, injured, or trapped beneath a rubble,\n"
+		  + "as her communication channels were abruptly cut short as she was requesting aid.\n\n"
+		  + "While she is definitely inside the facility, her precise location is unknown.\n\n"
+		  + "(Press Next to continue.)",
+
+		    "SCENARIO (cont'd)\n\n"
+		  + "Due to the extremely high level of danger associated with sending a human rescue squad,\n"
+		  + "an experimental robot prototype has been dispatched to attempt to locate her whereabouts.\n\n"
+		  + "Although the robot is equipped with a vision sensor, we expect it will be of little help\n"
+		  + "in the facility, whose electrical powers have been shut down resulting in total darkness,\n"
+		  + "which is further exacerbated by the presence of fire, smoke and radioactive materials.\n\n"
+		  + "To help compensate for this problem, the robot has been equipped with temperature and\n"
+		  + "smoke sensors to help deduce the location of nearby hazards.\n\n"
+		  + "Further, to help decontaminate harmful radioactive materials, the robot has been given\n"
+		  + "two bursts of decontaminant shots.\n\n"
+		  + "(Press Next to continue.)",
+
+		    "YOUR MISSION\n\n"
+		  + "Your mission, as the robot's operator, is to ensure that the robot safely explores\n"
+		  + "the nuclear facility while avoiding or decontaminating its hazardous areas,\n"
+		  + "until the robot manages to locate the victim, Nissa Clark.\n\n"
+		  + "You will first be given a tutorial along with practice drills in order to learn\n"
+		  + "the robot's controls and the way it traverses the environment.\n\n"
+		  + "After the tutorial and drills are complete, you and the robot will be sent out\n"
+		  + "on the actual mission to rescue Nissa Clark.\n\n"
+		  + "Press Next to view a short biographical information about Nissa Clark.",
+
+		    "Name:\t\tNissa Clark\n"
+		  + "Age:\t\t32\n"
+		  + "Job Title:\t\tFacilities Manager\n"
+		  + "Industry experience:\t9 years\n"
+		  + "Education:\t\tB.A. Nuclear Engineering, Northeastern State University\n"
+		  + "Marital Status:\tMarried with children\n"
+		  + "Hobbies:\t\tReading, kayaking, music\n\n"
+		  + "Press Next when ready to go on to the tutorial and practice missions."
+	};
+
 	public static String[] TUTORIAL = {
 						"Before beginning the actual mission, you should learn how to control the robot.\n"
 					  + "Let's begin the tutorial and complete a practice mission together.\n\n"
