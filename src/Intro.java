@@ -6,7 +6,11 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+//import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.URL;
 
+//import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -63,7 +67,11 @@ public class Intro extends JFrame {
 		instructionsSP = new JScrollPane(instructions);
 
 		//Free stock image from https://pixabay.com/en/woman-glasses-business-woman-1254454/
-		this.nissa = this.changeImageSize("nissa.jpg", 256, 384);	//changeImageSize() is a custom method
+		try {
+			this.nissa = this.changeImageSize("images/nissa.jpg", 256, 384);	//changeImageSize() is a custom method
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+		}
 		picLabel = new JLabel(nissa);
 
 		//Next button and page no.
@@ -107,9 +115,15 @@ public class Intro extends JFrame {
 	 * @param height desired height
 	 * @return resized image icon
 	 */
-	public ImageIcon changeImageSize(String fileName, int width, int height){ //change the image size to be fitted for the room
-		ImageIcon myIcon = new ImageIcon(fileName);
-		Image img = myIcon.getImage();
+	public ImageIcon changeImageSize(String fileName, int width, int height) throws IOException{ //change the image size to be fitted for the room
+//		BufferedImage img = ImageIO.read(getClass().getResource(fileName));
+//		Image newImg = img.getScaledInstance(width, height, java.awt.Image.SCALE_SMOOTH);
+//		ImageIcon newIcon = new ImageIcon(newImg);
+//		return newIcon;
+
+		URL url = Intro.class.getClassLoader().getResource(fileName);
+		ImageIcon icon = new ImageIcon(url);
+		Image img = icon.getImage();
 		Image newImg = img.getScaledInstance(width, height, java.awt.Image.SCALE_SMOOTH);
 		ImageIcon newIcon = new ImageIcon(newImg);
 		return newIcon;

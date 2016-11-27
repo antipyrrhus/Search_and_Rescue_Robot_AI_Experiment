@@ -311,7 +311,7 @@ public class InstructionMsg {
 	public static String FINAL_MESSAGE = "Thank you for completing the experiment.\n\n"
 			                           + "IMPORTANT: In order to get credit for your participation,\n"
 			                           + "please copy the code provided below and save it, as\n"
-			                           + "you will be asked to provide the code at the end of the survey.\n\n"
+			                           + "you will be asked to provide the code during the survey.\n\n"
 			                           + "Once you have copied the code below, close this window\n"
-			                           + "and return to the mturk survey.";
+			                           + "and return to the survey.";
 }

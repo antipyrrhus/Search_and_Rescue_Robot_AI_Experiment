@@ -7,10 +7,14 @@
  */
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
+import java.net.URL;
 //import java.util.Scanner;
 //import java.util.Timer;
 //import java.util.TimerTask;
 import javax.swing.*;
+
+
 
 @SuppressWarnings("serial")
 public class SAR extends JFrame {
@@ -105,7 +109,7 @@ public class SAR extends JFrame {
 			}
 
 		// Setup the title bar (JLabel)
-		titleBar = new JLabel(new ImageIcon("title.png"));
+		titleBar = new JLabel(new ImageIcon("images/title.png"));
 		titleBar.setBorder(BorderFactory.createEmptyBorder(2, 5, 4, 5));
 
 		// Setup the status bar (JLabel) to display status message during mission
@@ -794,32 +798,36 @@ public class SAR extends JFrame {
 
 		public DrawRoom() {
 
-			imageH1[0] = changeImageSize("hunter10.png");
-			imageH1[1] = changeImageSize("hunter11.png");
-			imageH1[2] = changeImageSize("hunter12.png");
-			imageH1[3] = changeImageSize("hunter13.png");
-			imageH2[0] = changeImageSize("hunter20.jpg");
-			imageH2[1] = changeImageSize("hunter21.jpg");
-			imageH2[2] = changeImageSize("hunter22.jpg");
-			imageH2[3] = changeImageSize("hunter23.jpg");
+			try {
+				imageH1[0] = changeImageSize("images/hunter10.png");
+				imageH1[1] = changeImageSize("images/hunter11.png");
+				imageH1[2] = changeImageSize("images/hunter12.png");
+				imageH1[3] = changeImageSize("images/hunter13.png");
+				imageH2[0] = changeImageSize("images/hunter20.jpg");
+				imageH2[1] = changeImageSize("images/hunter21.jpg");
+				imageH2[2] = changeImageSize("images/hunter22.jpg");
+				imageH2[3] = changeImageSize("images/hunter23.jpg");
 
-			this.setLayout(new GridLayout(3,3));
+				this.setLayout(new GridLayout(3,3));
 
-			pics[0][0] = new JLabel(changeImageSize("temperature.png"));
-			pics[0][1] = new JLabel(changeImageSize("stench.png"));
-			pics[0][2] = new JLabel(changeImageSize("victim.png"));
-			pics[1][0] = new JLabel(changeImageSize("heat.png"));
-			pics[1][1] = new JLabel(changeImageSize("disinfect.png"));
-			pics[1][2] = new JLabel(changeImageSize("success.png"));
-			pics[2][0] = new JLabel(imageH1[currentImageH1]);
-			pics[2][1] = new JLabel(changeImageSize("wastes.png"));
-			pics[2][2] = new JLabel(imageH2[currentImageH2]);
+				pics[0][0] = new JLabel(changeImageSize("images/temperature.png"));
+				pics[0][1] = new JLabel(changeImageSize("images/stench.png"));
+				pics[0][2] = new JLabel(changeImageSize("images/victim.png"));
+				pics[1][0] = new JLabel(changeImageSize("images/heat.png"));
+				pics[1][1] = new JLabel(changeImageSize("images/disinfect.png"));
+				pics[1][2] = new JLabel(changeImageSize("images/success.png"));
+				pics[2][0] = new JLabel(imageH1[currentImageH1]);
+				pics[2][1] = new JLabel(changeImageSize("images/wastes.png"));
+				pics[2][2] = new JLabel(imageH2[currentImageH2]);
 
-			for (int i = 0; i < 3; i++) {
-				for (int j = 0; j < 3; j++){
-					pics[i][j].setVisible(false);
-					add(pics[i][j]);
+				for (int i = 0; i < 3; i++) {
+					for (int j = 0; j < 3; j++){
+						pics[i][j].setVisible(false);
+						add(pics[i][j]);
+					}
 				}
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
 			}
 		}
 
@@ -856,9 +864,15 @@ public class SAR extends JFrame {
 	//end class DrawRoom extends JPanel
 
 
-	public ImageIcon changeImageSize(String fileName){ //change the image size to be fitted for the room
-		ImageIcon myIcon = new ImageIcon(fileName);
-		Image img = myIcon.getImage();
+	public ImageIcon changeImageSize(String fileName) throws IOException{ //change the image size to be fitted for the room
+//		ImageIcon myIcon = new ImageIcon(fileName);
+//		BufferedImage img = ImageIO.read(getClass().getResource(fileName));
+//		Image img = myIcon.getImage();
+
+		//Using getResource() allows it to run in runnable .jar form
+		URL url = SAR.class.getClassLoader().getResource(fileName);
+		ImageIcon icon = new ImageIcon(url);
+		Image img = icon.getImage();
 		Image newImg = img.getScaledInstance(CELL_SIZE/3, CELL_SIZE/3, java.awt.Image.SCALE_SMOOTH);
 		ImageIcon newIcon = new ImageIcon(newImg);
 		return newIcon;
