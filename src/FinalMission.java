@@ -44,24 +44,24 @@ public class FinalMission {
 		sar.instrSetFont(sar.instructions.getFont().deriveFont(18f));
 
 		//TODO Hard environment. Comment out this or the other to vary the environment.
-//		sar.board = new Board(new String[][]
-//				{{"", "", "", "", "", "P"},
-//				{"", "", "", "P", "", ""},
-//				{"", "P", "", "W", "P", ""},
-//				{"", "", "", "", "", ""},
-//				{"", "", "", "W", "P", ""},
-//				{"P", "", "", "P", "", "G"},
-//				});
-		
-		//Easy environment
 		sar.board = new Board(new String[][]
-				{{"", "", "P", "", "", ""},
-				 {"", "", "P", "", "", ""},
-				 {"", "", "P", "", "", ""},
-				 {"", "", "", "G", "", "W"},
-				 {"", "", "", "", "", "W"},
-				 {"", "", "", "", "", ""},
+				{{"", "", "", "", "", "P"},
+				{"", "", "", "P", "", ""},
+				{"", "P", "", "W", "P", ""},
+				{"", "", "", "", "", ""},
+				{"", "", "", "W", "P", ""},
+				{"P", "", "", "P", "", "G"},
 				});
+
+		//Easy environment
+//		sar.board = new Board(new String[][]
+//				{{"", "", "P", "", "", ""},
+//				 {"", "", "P", "", "", ""},
+//				 {"", "", "P", "", "", ""},
+//				 {"", "", "", "G", "", "W"},
+//				 {"", "", "", "", "", "W"},
+//				 {"", "", "", "", "", ""},
+//				});
 
 
 		Cell startRoom;

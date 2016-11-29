@@ -121,6 +121,7 @@ public class SAR extends JFrame {
 		instructions = new JTextArea();
 		instructions.setFont(new Font("Serif", Font.ITALIC, 15));
 		instructions.setFocusable(false);
+		instructions.setEditable(false);
 		instructions.setWrapStyleWord(true);
 		instructions.setBorder(BorderFactory.createEmptyBorder(2, 5, 4, 5));
 		instructionsSP = new JScrollPane(instructions);
@@ -369,7 +370,7 @@ public class SAR extends JFrame {
 		/* 1st parameter: is the cell at (0,0) always empty?
 		 * 2nd parameter: will this board be accessed by the AI?
 		 * See the constructor comments in Board.java for more details. */
-		
+
 		board = new Board(this.options.toUpperCase().contains("00") ? true : false, false);
 
 		//TODO OPTIONAL: instead of spawning a random board, we can customize
