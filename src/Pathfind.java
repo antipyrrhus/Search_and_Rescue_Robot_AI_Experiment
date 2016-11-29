@@ -70,8 +70,8 @@ public class Pathfind {
 		 * Print the root room and destination room to the console. */
 		q.add(rootRoomAI);
 		visitedArr.add(rootRoomAI);
-		System.out.printf("********************************\nStarting node: %s, Goal node: %s\nStarting Search...\n\n",
-				rootRoomAI.getXY(), destinationRoomAI.getXY());
+//		System.out.printf("********************************\nStarting node: %s, Goal node: %s\nStarting Search...\n\n",
+//				rootRoomAI.getXY(), destinationRoomAI.getXY());
 
 		/* Declare a variable to keep track of the current room in the priority queue (FIFO, auto-sorted).
 		 * This variable will be continuously updated in the while loop below. */
@@ -124,12 +124,12 @@ public class Pathfind {
 		/* Let end-user know if an optimal cost path was found from root to goal room. Display the total cost required.
 		 * Then, print and return the solution key using custom method call. */
 		if(child.getXY().equals(destinationRoomAI.getXY())) {
-			System.out.printf("\nOptimal-cost path to goal node found!\n"
-					+ "Cost from Room %s to Room %s is: %s.\n", rootRoomAI.getXY(), destinationRoomAI.getXY(), destinationRoomAI.getDistanceSoFar());
+//			System.out.printf("\nOptimal-cost path to goal node found!\n"
+//					+ "Cost from Room %s to Room %s is: %s.\n", rootRoomAI.getXY(), destinationRoomAI.getXY(), destinationRoomAI.getDistanceSoFar());
 			return printSolution(rootRoomAI, destinationRoomAI);
 		}
 		else {
-			System.out.println("Goal node not reached.");
+//			System.out.println("Goal node not reached.");
 			return null;
 		}
 	}
@@ -310,17 +310,17 @@ public class Pathfind {
 		/* Create a stack to temporarily save the contents of the queue as it is being emptied out */
 		Stack<CellAsPerceivedByAI> s = new Stack<>();
 
-		System.out.print("Current Queue is: [ ");
+//		System.out.print("Current Queue is: [ ");
 
 		/* Empty out the queue into the Stack, and include the following info:
 		 * 1) the room's location, AND
 		 * 2) the distance traveled thus far (for UCS) */
 		while(!q.isEmpty()) {
-			CellAsPerceivedByAI tmp = q.peek();
-			System.out.print(tmp.getXY() + "(" + tmp.getDistanceSoFar() + ") ");
+//			CellAsPerceivedByAI tmp = q.peek();
+//			System.out.print(tmp.getXY() + "(" + tmp.getDistanceSoFar() + ") ");
 			s.push(q.remove());
 		}
-		System.out.println("]");
+//		System.out.println("]");
 
 		/* We need to restore the queue. Add the nodes back in from the Stack. */
 		while(!s.isEmpty()) {
@@ -435,18 +435,18 @@ public class Pathfind {
 		}
 
 		/* We're ready to print the solution. */
-		System.out.print("SOLUTION: ");
+//		System.out.print("SOLUTION: ");
 		currRoom = solution.pop();
-		System.out.printf("%s", currRoom.getXY());	//Remember a stack is LIFO (last in first out). So we begin by printing the starting room.
+//		System.out.printf("%s", currRoom.getXY());	//Remember a stack is LIFO (last in first out). So we begin by printing the starting room.
 		solutionAL.add(currRoom);	//add this room to the ArrayList that will be returned.
 
 		/* Continue this loop until the stack is all emptied out */
 		while(!solution.isEmpty()) {
 			currRoom = solution.pop();
 			solutionAL.add(currRoom);	//add this room to the ArrayList that will be returned.
-			System.out.printf(" -> %s", currRoom.getXY());	//Keep popping out the rooms
+//			System.out.printf(" -> %s", currRoom.getXY());	//Keep popping out the rooms
 		}
-		System.out.println();	//Add a new line for good measure
+//		System.out.println();	//Add a new line for good measure
 		return solutionAL;
 	}
 }

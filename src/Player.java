@@ -332,11 +332,14 @@ public class Player
 	public char getAction(Board board, Board boardPerceivedByAI, int percentRandom) {
 		/* BASE CASE where percentRandom > 0. In this case return a random action some of the time. */
 		if (percentRandom > 0) {
-			char[] actions = {'R', 'L', 'F', 'G', 'S'};
+			char[] actions = {'R', 'L', 'F', 'S'};
 			if ( (int)(Math.floor(Math.random() * 100)) <= percentRandom ) {
-				System.out.println("AI robot acts randomly....");
+//				System.out.println("AI robot acts randomly....");
 				int index = new java.util.Random().nextInt(actions.length);	//choose a random index from the actions array
-				System.out.printf("Random action chosen is %s\n", actions[index]);
+				while ( (actions[index] == 'S' && !this.hasDisinfectant()) ) { //don't take action 'S' randomly if out of decontaminant
+					index = new java.util.Random().nextInt(actions.length);	//choose another random index
+				}
+//				System.out.printf("Random action chosen is %s\n", actions[index]);
 				return actions[index];
 			}
 		}
@@ -354,7 +357,7 @@ public class Player
 				for(int j = 0; j < Board.COLS; j++) {
 					/* If the AI knows that a given room has victim... */
 					if(boardPerceivedByAI.getRoomAI(i, j).hasVictim()) {
-						System.out.println(this.name + " can see the location of the victim! Trying to find a safe path to the victim...");
+//						System.out.println(this.name + " can see the location of the victim! Trying to find a safe path to the victim...");
 						/* ...then use custom method (in Pathfind.java) to do a UCS search and see if
 						 * a SAFE way to the victim can be found. If so, return the ArrayList containing the cost-optimal solution path,
 						 * and then use the .get(1) command to get the room contained in index 1 of that ArrayList.
@@ -362,11 +365,11 @@ public class Player
 						 * identifies the adjacent room to which the AI must move in its path to the victim. */
 						ArrayList<CellAsPerceivedByAI> safePathAL = pf.ucs(currentRoomAI, boardPerceivedByAI.getRoomAI(i, j), boardPerceivedByAI, this.dir);
 						if(safePathAL == null) {
-							System.out.println("No safe path to the victim is found at this time. The victim will have to wait a bit longer.");
+//							System.out.println("No safe path to the victim is found at this time. The victim will have to wait a bit longer.");
 							break outerloop;	//if there is no safe path to the victim, then break off this inner AND outer loop.
 						}
 						CellAsPerceivedByAI nextDestination = safePathAL.get(1);	//This is the room the AI must move on to next.
-						System.out.println("Safe path to the victim found! the Next room the AI will move on to is: " + nextDestination.getXY()); //testing
+//						System.out.println("Safe path to the victim found! the Next room the AI will move on to is: " + nextDestination.getXY()); //testing
 
 						/* Now use custom method to return the key command the AI must use in order to move on to the next room.
 						 * If the key command is 'F' (forward) and the next room happens to have a wastes in it
@@ -376,7 +379,7 @@ public class Player
 						 * then return 'S' (shoot) instead of 'F' provided the AI player has an disinfectant. */
 						char tempMove = computeMove(nextDestination);
 						if(tempMove == 'F' && nextDestination.hasWastes() && this.hasDisinfectant()) {
-							System.out.println("The AI SHOOTS the disinfectant!");
+//							System.out.println("The AI SHOOTS the disinfectant!");
 							return 'S';
 						}
 						return tempMove;
@@ -410,7 +413,7 @@ public class Player
 		/* BASE CASE where AI player is standing right next to a room that possibly contains a wastes.
 		 * Aim and shoot the disinfectant if chance of wastes is 50% or more AND if AI player has at least one disinfectant left. */
 		if(this.hasDisinfectant()) {
-			System.out.println("Now checking to see if adjacent rooms might have wastess in them (Remember AI has disinfectant(s))...");
+//			System.out.println("Now checking to see if adjacent rooms might have wastess in them (Remember AI has disinfectant(s))...");
 			char move = ' ';	//initialize a possible move to be returned
 			CellAsPerceivedByAI neighborWithBestChanceOfWastes = null;	//initialize the room that has the greatest chance of wastes
 			int bestChanceOfWastes = -1;	//initialize the probability that a room has wastes in it
@@ -460,8 +463,8 @@ public class Player
 			//end for(RoomAsPerceivedByAI neighbor : this.currentRoomAI.getNeighbors())
 
 			if(neighborWithBestChanceOfWastes != null) {
-				System.out.printf("%s has %s%% chance of wastes! Aiming disinfectant...",
-						neighborWithBestChanceOfWastes.getXY(), neighborWithBestChanceOfWastes.getprobabilityOfWastes());
+//				System.out.printf("%s has %s%% chance of wastes! Aiming disinfectant...",
+//						neighborWithBestChanceOfWastes.getXY(), neighborWithBestChanceOfWastes.getprobabilityOfWastes());
 				/* Before we try to shoot the Wastes, we want to make sure we're facing the right direction.
 				 * Use custom method to return the key command the AI would use if it were to move into this room.
 				 * If this method returns 'F' (forward), then we know the AI is facing the direction of the possible Wastes.
@@ -474,15 +477,17 @@ public class Player
 					 * the Wastes was never in the room to begin with. Either way, the AI now knows for certain
 					 * that the probability of a Wastes in this room is zero. */
 					neighborWithBestChanceOfWastes.setprobabilityOfWastes(0);
-					System.out.println("The AI SHOOTS the disinfectant!");
+//					System.out.println("The AI SHOOTS the disinfectant!");
 					return 'S';
 				}
 				else move = tempMove;
 			}
 
 			if(move != ' ') return move;	//If we found a valid move above, then return it.
-			else System.out.printf("None of the adjacent rooms have 50%% or more chance of containing a Wastes. %s will save disinfectants for now.\n",
-					this.name);
+			else {
+//				System.out.printf("None of the adjacent rooms have 50%% or more chance of containing a Wastes. %s will save disinfectants for now.\n",
+//					this.name);
+			}
 		}
 		//end if
 
@@ -507,7 +512,7 @@ public class Player
 		 * situation does come up sometimes, and having this condition in here just in case can mean the
 		 * difference between life and death. */
 		if(tempMove == 'F' && tempDestination.getprobabilityOfWastes() > 0 && this.hasDisinfectant()) {
-			System.out.printf("\nBefore moving forward, %s senses a possible Wastes...and decides to SHOOT the disinfectant!\n", this.name);
+//			System.out.printf("\nBefore moving forward, %s senses a possible Wastes...and decides to SHOOT the disinfectant!\n", this.name);
 			tempDestination.setprobabilityOfWastes(0);
 			return 'S';
 		}
@@ -540,7 +545,7 @@ public class Player
 	public CellAsPerceivedByAI getNearestAdjRoom(ArrayList<CellAsPerceivedByAI> leastRiskyRoomsAL, Board boardPerceivedByAI) {
 		int leastCost = Integer.MAX_VALUE;	//initialize the number of turns required for the AI to get to the least risky rooms
 		CellAsPerceivedByAI nextPath = null;	//initialize the value to be returned
-		System.out.println("\nNow going through all the least risky unexplored room(s) and trying to find most efficient path...");
+//		System.out.println("\nNow going through all the least risky unexplored room(s) and trying to find most efficient path...");
 		/* Go thru each element in the ArrayList */
 		for(CellAsPerceivedByAI r : leastRiskyRoomsAL){
 			/* Use Pathfind.java's custom method to get an arraylist containing the cost-optimal solution path from the
@@ -555,13 +560,13 @@ public class Player
 				 * is saved in that room's distanceSoFar attribute. So just use the getter method. */
 				int tempCost = r.getDistanceSoFar();
 
-				System.out.printf("Total cost to move from %s to %s : %s\n", currentRoomAI.getXY(), r.getXY(), tempCost);	//testing
+//				System.out.printf("Total cost to move from %s to %s : %s\n", currentRoomAI.getXY(), r.getXY(), tempCost);	//testing
 				if(tempCost < leastCost) {
-					System.out.printf("Woot! The above total cost is less than the previously saved leastCost! "
-							+ "the destination is now set to %s.\n", r.getXY());
+//					System.out.printf("Woot! The above total cost is less than the previously saved leastCost! "
+//							+ "the destination is now set to %s.\n", r.getXY());
 					leastCost = tempCost;	//update least cost variable
 					nextPath = tempSolutionPath.get(1);	//get the 1st-index element of the solution path
-					System.out.printf("The adjacent room %s will move to is now set to %s\n", this.name, nextPath.getXY());
+//					System.out.printf("The adjacent room %s will move to is now set to %s\n", this.name, nextPath.getXY());
 				}
 			}
 			//end if(tempSolutionPath != null)
@@ -653,8 +658,8 @@ public class Player
 				 * unexplored rooms that will be identified as per above are: (1,0), (1,1), and (0,2).
 				 *  */
 				if(!tempR.isExplored() && tempR.hasSafeNeighbors()) {
-					System.out.printf("\nFound unexplored room at %s:\n%s\nIt's possible for %s to navigate to this room safely. "
-							, tempR.getXY(), tempR, this.name);
+//					System.out.printf("\nFound unexplored room at %s:\n%s\nIt's possible for %s to navigate to this room safely. "
+//							, tempR.getXY(), tempR, this.name);
 
 					/* Get the probability that this room has a wastes, and/or that this room has a pit.
 					 * Remember that tempR is a RoomAsPerceivedByAI object, which does NOT contain complete information
@@ -675,9 +680,11 @@ public class Player
 					double combinedRisk = (pitRisk / 100.0 * wastesRisk / 100.0)
 							+ ((100 - pitRisk) / 100.0 * wastesRisk / 100.0)
 							+ (pitRisk / 100.0 * (100 - wastesRisk) / 100.0);
-					System.out.printf("Combined risk is %.2f%%.\n", combinedRisk * 100);
+//					System.out.printf("Combined risk is %.2f%%.\n", combinedRisk * 100);
 
-					if(combinedRisk == 0) System.out.println("This room is guaranteed 100% SAFE!");
+					if(combinedRisk == 0) {
+//						System.out.println("This room is guaranteed 100% SAFE!");
+					}
 
 					/* DESIGN DECISION: After much consideration, I decided to break up the definition of "least risky" into
 					 * two categories.
@@ -718,8 +725,8 @@ public class Player
 					 * ===================================================================================================
 					 * */
 					if(!this.hasDisinfectant()) {	//AI has no disinfectants
-						System.out.printf("%s doesn't have disinfectants left. Trying to find least overall combined risk (wastes + pit)...\n",
-								this.name);
+//						System.out.printf("%s doesn't have disinfectants left. Trying to find least overall combined risk (wastes + pit)...\n",
+//								this.name);
 						if(combinedRisk < leastCombinedRisk) {
 							leastCombinedRisk = combinedRisk;
 							unexploredRoomsAL.clear();	//clear the ArrayList of any previous rooms, because we just found a better (less risky) room!
@@ -731,8 +738,8 @@ public class Player
 					}
 					/* ==SECOND CATEGORY== */
 					else {	//AI has disinfectant(s).
-						System.out.println(this.name + " has disinfectant(s) left. " + (this.aggressiveModeOn == true ? "Time to go wastes hunting!" :
-								"Will try to conserve disinfectants and use them only if absolutely necessary."));
+//						System.out.println(this.name + " has disinfectant(s) left. " + (this.aggressiveModeOn == true ? "Time to go wastes hunting!" :
+//								"Will try to conserve disinfectants and use them only if absolutely necessary."));
 						/* Even though AI has disinfectants, it still must avoid pits at all costs. */
 						if(pitRisk < pitLeastRisk) {
 							pitLeastRisk = pitRisk;
@@ -776,11 +783,11 @@ public class Player
 		}
 		//end for i
 
-		System.out.printf("\n**Least risky unexplored room(s) as determined by %s**\n", this.name);	//print to console for testing
-		for(CellAsPerceivedByAI r : unexploredRoomsAL) {
-			System.out.println(r);
-		}
-		System.out.println();	//add an extra line for formatting
+//		System.out.printf("\n**Least risky unexplored room(s) as determined by %s**\n", this.name);	//print to console for testing
+//		for(CellAsPerceivedByAI r : unexploredRoomsAL) {
+//			System.out.println(r);
+//		}
+//		System.out.println();	//add an extra line for formatting
 		return unexploredRoomsAL;	//return the ArrayList of "least risky unexplored rooms"
 	}
 

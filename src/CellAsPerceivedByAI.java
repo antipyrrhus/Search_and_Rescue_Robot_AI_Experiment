@@ -234,8 +234,8 @@ public class CellAsPerceivedByAI extends Cell implements Comparable<CellAsPercei
 					 * than this one.) */
 					rAI.setprobabilityOfWastes(rAI.getprobabilityOfWastes() == 100 ? 100 : 0);
 					if(rAI.getprobabilityOfWastes() == 0) {
-						System.out.printf("Thanks to the allWastesAccountedFor() method, AI now understands "
-								+ "that Room at %s has 0%% chance of having a waste!\n", rAI.getXY());
+//						System.out.printf("Thanks to the allWastesAccountedFor() method, AI now understands "
+//								+ "that Room at %s has 0%% chance of having a waste!\n", rAI.getXY());
 					}
 				}
 				//end if(allWastesAccountedFor(board, boardAI))
@@ -395,7 +395,7 @@ public class CellAsPerceivedByAI extends Cell implements Comparable<CellAsPercei
 		int wastesRemaining = board.getwastesRemaining();	//get the total number of wastes that remain on the Board.
 		/* If all wastes are dead, return true. */
 		if(wastesRemaining == 0) {
-			System.out.println("allWastesAccountedFor(): No wastes remain!");
+//			System.out.println("allWastesAccountedFor(): No wastes remain!");
 			return true;
 		}
 

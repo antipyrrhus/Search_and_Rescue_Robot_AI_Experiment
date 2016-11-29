@@ -209,13 +209,13 @@ public class SARMain extends JFrame {
 				 * See SAR.java class for more details on its constructor. */
 				String optionString = "";
 				if (SARMain.this.tutorialBtn.isSelected()) {
-					//TODO consider changing the % below to a nonzeo number for some of the experiments,
+					//consider changing the % below to a nonzeo number for some of the experiments,
 					//to introduce different levels of competence of the robot AI.
-					optionString = "T 00 0% B";	//Begin the game with the tutorial option if tutorial button selected
+					optionString = "T00 0%B";	//Begin the game with the tutorial option if tutorial button selected
 
 				} else {
-					optionString = singlePlayerMode + " " + startRoomIs_Always_0_0 + " " + aggressiveModeP1 + " " +
-							  aggressiveModeP2 + " " + aiRandomPercentTxt.getText() + "%" + " " + humanOrRobotOption;
+					optionString = singlePlayerMode + startRoomIs_Always_0_0 + aggressiveModeP1 +
+							  aggressiveModeP2 + " " + aiRandomPercentTxt.getText() + "%" + humanOrRobotOption;
 				}
 
 				System.out.println(optionString);	//Testing

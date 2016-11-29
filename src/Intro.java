@@ -183,7 +183,9 @@ public class Intro extends JFrame {
 		timer = new Timer(1, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				timer.stop();
-				SAR ww = new SAR("T 00 0% B", "Robot", "N/A");		//initialize instance of SAR class with parameters set to tutorial mode
+				//TODO edit competence of robot here
+//				SAR ww = new SAR("T00 0%B", "Robot", "N/A");		//initialize instance of SAR class with parameters set to tutorial mode
+				SAR ww = new SAR("T00 25%B", "Robot", "N/A");		//this mode is the same as above except robot acts randomly 25% of the time
 				while(!ww.isVisible()) {}	//wait for the tutorial GUI to load
 				dispose();					//once GUI loads, close / destroy this Intro GUI. dispose() is a built-in method.
 			}

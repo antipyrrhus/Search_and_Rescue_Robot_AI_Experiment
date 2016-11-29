@@ -43,25 +43,25 @@ public class FinalMission {
 		this.drillInstrIndex = -1;
 		sar.instrSetFont(sar.instructions.getFont().deriveFont(18f));
 
-		//Hard environment. Comment out this or the other to vary the environment.
-		sar.board = new Board(new String[][]
-				{{"", "", "", "", "", "P"},
-				{"", "", "", "P", "", ""},
-				{"", "P", "", "W", "P", ""},
-				{"", "", "", "", "", ""},
-				{"", "", "", "W", "P", ""},
-				{"P", "", "", "P", "", "G"},
-				});
+		//TODO Hard environment. Comment out this or the other to vary the environment.
+//		sar.board = new Board(new String[][]
+//				{{"", "", "", "", "", "P"},
+//				{"", "", "", "P", "", ""},
+//				{"", "P", "", "W", "P", ""},
+//				{"", "", "", "", "", ""},
+//				{"", "", "", "W", "P", ""},
+//				{"P", "", "", "P", "", "G"},
+//				});
 		
 		//Easy environment
-//		sar.board = new Board(new String[][]
-//				{{"", "", "P", "", "", ""},
-//				 {"", "", "P", "", "", ""},
-//				 {"", "", "P", "", "", ""},
-//				 {"", "", "", "G", "", "W"},
-//				 {"", "", "", "", "", "W"},
-//				 {"", "", "", "", "", ""},
-//				});
+		sar.board = new Board(new String[][]
+				{{"", "", "P", "", "", ""},
+				 {"", "", "P", "", "", ""},
+				 {"", "", "P", "", "", ""},
+				 {"", "", "", "G", "", "W"},
+				 {"", "", "", "", "", "W"},
+				 {"", "", "", "", "", ""},
+				});
 
 
 		Cell startRoom;
@@ -85,7 +85,6 @@ public class FinalMission {
 	protected void showNextInstruction() {
 		//Base case. If the mission is over (success or failure), show the next part.
 		if (drillInstrIndex == drillInstructionArr.length - 1) {
-			//TODO
 			sar.recordStats(this);
 			sar.enableInstructionTextCopy(true);
 			sar.setBtnNextVisible(false);

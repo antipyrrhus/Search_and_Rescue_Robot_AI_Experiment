@@ -90,6 +90,7 @@ public class SAR extends JFrame {
 	 */
 	public SAR(String options, String p1Name, String p2Name) {
 		this.options = options;
+		System.out.println("options:" + this.options);
 		this.p1Name = p1Name;
 		this.p2Name = p2Name;
 
@@ -342,11 +343,11 @@ public class SAR extends JFrame {
 	protected void removeKeyListeners(boolean b) {
 		if (b == true) {
 			canvas.removeKeyListeners();
-			System.out.println("key listeners removed");
+//			System.out.println("key listeners removed");
 		} else {
 			canvas.removeKeyListeners(); //first reset all listeners before adding them (this is to prevent duplicate key listeners
 			canvas.addKeyListeners();
-			System.out.println("key listeners added");
+//			System.out.println("key listeners added");
 		}
 	}
 
@@ -659,18 +660,18 @@ public class SAR extends JFrame {
 		case ' ':
 			//pressing spacebar activates AI as long as the current player has been initialized as an AI player.
 			if(currentPlayer.isAI()) {
-				System.out.printf("========================================\nSPACEBAR PRESSED. Activating AI for %s...\n"
-						+ "========================================\n",
-						currentPlayer.getName());
+//				System.out.printf("========================================\nSPACEBAR PRESSED. Activating AI for %s...\n"
+//						+ "========================================\n",
+//						currentPlayer.getName());
 				validKeyTyped = true;
 				/* See the Player.java class for the custom method getAction(). It returns a command char.
 				 * This is the heart of AI's algorithm. */
 				int percentRandom = 0;	//initialize the % of time the AI robot will act randomly
 				//If the options were set before the mission to allow random acts by robot a certain % of the time,
 				//extract that percent value now and execute updateGame() method with it as parameter
-				if (this.options.toUpperCase().contains("%%")) {
+				if (SAR.this.options.indexOf("%") != -1) {
 					percentRandom = Integer.parseInt(this.options.substring(this.options.indexOf(" ") + 1, this.options.indexOf("%")));
-					System.out.printf("Random action chance: %s%%", percentRandom);
+//					System.out.printf("Random action chance: %s%%\n", percentRandom);
 				}
 				this.updateGame(currentPlayer, currentPlayer.getAction(this.board, this.boardPerceivedByAI, percentRandom), 1);
 				this.numOfTimesAITriggered++;
@@ -892,19 +893,19 @@ public class SAR extends JFrame {
 
 		public void addKeyListeners() {
 			//get key input. Among others, this maps arrow keys to char commands to be interpreted by the GUI.
-			System.out.println("add key listeners invoked!");
+//			System.out.println("add key listeners invoked!");
 			keyAdapter = new KeyAdapter(){
 				@Override
 				public void keyPressed(KeyEvent e){
 					char command;
 					if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
-						System.out.println("FORWARD");
+//						System.out.println("FORWARD");
 						command = 'F';
 					} else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-						System.out.println("TURN RIGHT");
+//						System.out.println("TURN RIGHT");
 						command = 'R';
 					} else if (e.getKeyCode() == KeyEvent.VK_LEFT){
-						System.out.println("TURN LEFT");
+//						System.out.println("TURN LEFT");
 						command = 'L';
 					//Let's disable 'F', 'R' and 'L' keys because they're captured by the arrow keys above
 					} else if (e.getKeyCode() == KeyEvent.VK_F || e.getKeyCode() == KeyEvent.VK_R || e.getKeyCode() == KeyEvent.VK_L) {
@@ -943,7 +944,7 @@ public class SAR extends JFrame {
 								Player nextPlayer = (currentPlayer == h1 ? h2 : h1);
 								if (nextPlayer.isAlive())
 									currentPlayer = nextPlayer;
-								System.out.printf("Total no. of moves so far: %s\n", numOfMoves);
+//								System.out.printf("Total no. of moves so far: %s\n", numOfMoves);
 							}
 						}
 						//end nested if
@@ -1087,7 +1088,7 @@ public class SAR extends JFrame {
 //				System.out.println("Now loading mission. Please wait...");
 //				new SAR(options, "Robot 1", "Robot 2");
 
-				//Tutorial / Experiment mode
+				//Tutorial / Experiment mode.
 				new SAR("T 00 0% B", "Robot", "N/A");
 			}
 		});

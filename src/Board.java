@@ -213,39 +213,39 @@ public class Board
 			 * as opposed to the file being overwritten. */
 			PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter("board.txt", true)));
 			pw.print("board = new Board(new String[][]\n{{\"");
-			System.out.print("board = new Board(new String[][]\n{{\"");
+//			System.out.print("board = new Board(new String[][]\n{{\"");
 			for(int i = 0; i < rooms.length; i++) {
 				for(int j = 0; j < rooms[i].length; j++) {
 					if(rooms[i][j].hasWastes()) {
 						pw.print("W");
-						System.out.print("W");
+//						System.out.print("W");
 					}
 					if(rooms[i][j].hasVictim()) {
 						pw.print("G");
-						System.out.print("G");
+//						System.out.print("G");
 					}
 					if(rooms[i][j].isPit()) {
 						pw.print("P");
-						System.out.print("P");
+//						System.out.print("P");
 					}
 					if(j < rooms[i].length - 1) {
 						pw.print("\", \"");
-						System.out.print("\", \"");
+//						System.out.print("\", \"");
 					}
 				}
 				pw.println("\"},");
-				System.out.println("\"},");
+//				System.out.println("\"},");
 				if(i < rooms.length - 1) {
 					pw.print(" {\"");
-					System.out.print(" {\"");
+//					System.out.print(" {\"");
 				}
 			}
 			pw.println("});");
-			System.out.println("});");
+//			System.out.println("});");
 			pw.close();
 		}
 		catch(IOException ioe) {
-			System.out.println("Error occurred while trying to write to file!");
+//			System.out.println("Error occurred while trying to write to file!");
 		}
 	}
 }

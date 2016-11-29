@@ -231,15 +231,15 @@ public class Tutorial {
 		String[] actionRequested = tutorialStatusCheckerArr[tutorialInstrIndex];
 		String actionTakenByUser = command;
 
-		System.out.println("actionRequested: " + actionRequested[0]);
-		System.out.println("actionTakenByUser: " + actionTakenByUser);
+//		System.out.println("actionRequested: " + actionRequested[0]);
+//		System.out.println("actionTakenByUser: " + actionTakenByUser);
 
 		//Another base case: the action requested doesn't equal the action the user took In this case return immediately
 		//(only exception is if the action requested is "M" (Move) and the user action was F, R or L. In this case, don't return immediately.)
 		if (actionRequested[0].equals("M") && !"FLR".contains(actionTakenByUser)) return;
 		if (!actionRequested[0].equals("M") && !actionRequested[0].equals(actionTakenByUser)) return;
 
-		System.out.println("Beginning switch statement...");
+//		System.out.println("Beginning switch statement...");
 		switch(actionRequested[0]) {
 		case "M":
 			//Will re-enable next button if the user has moved to a specific location
@@ -247,7 +247,7 @@ public class Tutorial {
 			int locRow = locRequired[0];
 			int locCol = locRequired[1];
 			SAR.DrawRoom cellReqd = sar.squares[locRow][locCol];
-			System.out.println(cellReqd);
+//			System.out.println(cellReqd);
 			sar.repaint();
 			SwingUtilities.invokeLater(new Runnable()
 		    {
