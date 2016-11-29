@@ -205,7 +205,7 @@ public class InstructionMsg {
 					  + "then press Next to continue.",
 
 					  	"The robot has been destroyed, and the mission is a failure.\n"
-					  + "Fortunately, this was a practice mission. Press A to start the tutorial again."
+					  + "Fortunately, this was a practice mission.\n\nPress A to start the tutorial again."
 	};
 
 

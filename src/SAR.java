@@ -955,8 +955,8 @@ public class SAR extends JFrame {
 						}
 					} else if (Character.toUpperCase(command) == 'A') {       // this command can be used when mission is over to restart mission
 						if (SAR.this.isTutorialMode()) {
-//							initTutorial();	//If this was a tutorial mode, restart the same tutorial
-							tutorial = new Tutorial(SAR.this);
+							initTutorial();	//If this was a tutorial mode, restart the same tutorial
+//							tutorial = new Tutorial(SAR.this);
 							return;
 						}
 						else initMission();									//otherwise, initialize mission again
