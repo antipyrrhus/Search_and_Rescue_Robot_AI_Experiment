@@ -43,14 +43,26 @@ public class FinalMission {
 		this.drillInstrIndex = -1;
 		sar.instrSetFont(sar.instructions.getFont().deriveFont(18f));
 
+		//Hard environment. Comment out this or the other to vary the environment.
 		sar.board = new Board(new String[][]
-										{{"", "", "", "", "", ""},
-										{"", "", "", "P", "", ""},
-										{"", "W", "", "", "", ""},
-										{"", "W", "", "G", "", "P"},
-										{"", "", "", "", "", ""},
-										{"P", "", "", "", "", ""},
-										});
+				{{"", "", "", "", "", "P"},
+				{"", "", "", "P", "", ""},
+				{"", "P", "", "W", "P", ""},
+				{"", "", "", "", "", ""},
+				{"", "", "", "W", "P", ""},
+				{"P", "", "", "P", "", "G"},
+				});
+		
+		//Easy environment
+//		sar.board = new Board(new String[][]
+//				{{"", "", "P", "", "", ""},
+//				 {"", "", "P", "", "", ""},
+//				 {"", "", "P", "", "", ""},
+//				 {"", "", "", "G", "", "W"},
+//				 {"", "", "", "", "", "W"},
+//				 {"", "", "", "", "", ""},
+//				});
+
 
 		Cell startRoom;
 		CellAsPerceivedByAI startRoomAI;

@@ -1,13 +1,12 @@
 
-/** Class: Room.java
- *  @author Yury Park (Starter code provided by Dr. Xu (modified from Sebastien's Code))
+/** Class: Cell.java
+ *  @author Yury Park
  *  @version 1.0 <p>
- *  Course: Artificial Intelligence, Dr. Xu
- *  Written / Updated: Apr 7, 2015
+ *  Course: HRI
  *
- *  This class - the Room class.
+ *  This class - the Cell class.
  *  Purpose - Contains all information about the Room object. This class will NOT be accessed by the AI
- *  during the game. See RoomAsPerceivedByAI.java class for more info.
+ *  during the game. See CellAsPerceivedByAI.java class for more info.
  */
 public class Cell
 {

@@ -363,13 +363,13 @@ public class SAR extends JFrame {
 	 * Initialize the mission map contents and status.
 	 * */
 	public void initMission() {
+		initNumOfMoves();	//reset counter
 		//Begin by creating a random board.
 		/* 1st parameter: is the cell at (0,0) always empty?
 		 * 2nd parameter: will this board be accessed by the AI?
 		 * See the constructor comments in Board.java for more details. */
-//		board = new Board(this.options.toUpperCase().contains("00") ? true : false, false);
-
-		initNumOfMoves();	//reset counter
+		
+		board = new Board(this.options.toUpperCase().contains("00") ? true : false, false);
 
 		//TODO OPTIONAL: instead of spawning a random board, we can customize
 		//our own board! Just un-comment any of the below boards or paste your own!
@@ -441,14 +441,14 @@ public class SAR extends JFrame {
 
 		//RARE situation (one-player mode) where setting aggressiveModeOn to true will result in death.
 		//Non-aggressive mode will get the victim. Start at cell (0,0).
-		board = new Board(new String[][]
-				{{"", "", "", "P", "G", "P"},
-				{"", "", "P", "W", "W", ""},
-				{"", "", "", "", "", ""},
-				{"", "", "", "", "", ""},
-				{"", "", "", "P", "P", ""},
-				{"P", "", "", "", "", ""},
-				});
+//		board = new Board(new String[][]
+//				{{"", "", "", "P", "G", "P"},
+//				{"", "", "P", "W", "W", ""},
+//				{"", "", "", "", "", ""},
+//				{"", "", "", "", "", ""},
+//				{"", "", "", "P", "P", ""},
+//				{"P", "", "", "", "", ""},
+//				});
 
 
 		//Very rare instance. if both players are AI and start at cell (0,0),

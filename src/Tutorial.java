@@ -143,7 +143,8 @@ public class Tutorial {
 
 		//Another base case to prevent out of index error
 		if (tutorialInstrIndex + 1 >= tutorialStrArr.length) {
-			tutorialInstrIndex = tutorialStrArr.length - 1;
+			sar.recordStats(this);
+			sar.initDrillHuman();
 			return;
 		}
 
@@ -165,7 +166,7 @@ public class Tutorial {
 	protected void showMissionFailureInstruction() {
 		tutorialInstrIndex = tutorialStrArr.length - 1;
 		sar.setInstrText(tutorialStrArr[tutorialInstrIndex]);
-		sar.enableBtnNext(false);	//disable next button since game over
+		sar.enableBtnNext(true);
 		this.removeKeyListeners(false);	//do not remove (aka, add back) key listeners to allow user to restart
 		this.currentPage = totalPagesOfTutorial;
 		setPageNo(currentPage);
@@ -278,8 +279,6 @@ public class Tutorial {
   		  	removeKeyListeners(true); //remove key listeners
 			break;
 		case "A":
-			//Immediately remove key listeners and enable buttons (the tutorial is designed so that the robot WILL be facing the correct direction
-			//and be in the correct location when the user is instructed to use this command.)
 			sar.enableBtnNext(true);
   		  	removeKeyListeners(true); //remove key listeners
 			break;

@@ -205,12 +205,15 @@ public class InstructionMsg {
 					  + "then press Next to continue.",
 
 					  	"The robot has been destroyed, and the mission is a failure.\n"
-					  + "Fortunately, this was a practice mission.\n\nPress A to start the tutorial again."
+					  + "Fortunately, this was a practice mission.\n\n"
+					  + "Press A to attempt the tutorial again.\n\n"
+					  + "If you wish to move on to the practice drill without\n"
+					  + "completing the tutorial, press NEXT instead (not recommended)."
 	};
 
 
 	public static String[] DRILL_HUMAN = {
-				"Now that you've successfully completed the tutorial,\n"
+				"Now that you've gone through the tutorial,\n"
 			  + "you will get one more practice drill on a different environment.\n"
 			  + "The locations of Nissa, fire pits and radioactive wastes\n"
 			  + "have all been changed for this drill.\n\n"
