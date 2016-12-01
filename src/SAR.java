@@ -69,6 +69,8 @@ public class SAR extends JFrame {
 	private PracticeDrillAI practiceDrillAI;
 	private FinalMission finalMission;
 
+	private int experimentType;		//1 - easy/bad AI, 2 - easy/good AI, 3 - hard/bad AI, 4 - hard/good AI
+
 	protected String options;	//A String containing some options to be provided by the end-user
 //	protected java.util.Timer timer;
 	protected String controlMode;	//Human manual, AI, or both modes enabled
@@ -90,9 +92,15 @@ public class SAR extends JFrame {
 	 */
 	public SAR(String options, String p1Name, String p2Name) {
 		this.options = options;
-		System.out.println("options:" + this.options);
+//		System.out.println("options:" + this.options);
 		this.p1Name = p1Name;
 		this.p2Name = p2Name;
+
+		if (this.options.contains("#")) {
+			int index = this.options.indexOf("#");
+			this.experimentType = Integer.parseInt(options.substring(index + 1, index + 2));
+			System.out.println("Experiment type is? " + this.experimentType);
+		}
 
 		canvas = new DrawCanvas();  // Construct a drawing canvas (a JPanel)
 		canvas.setFocusable(true);
@@ -197,7 +205,8 @@ public class SAR extends JFrame {
 	 */
 	protected void recordStats(Object o) {
 		if (o instanceof Tutorial) {
-			//nothing to record for the tutorial stage
+			//Just record the experiment type for the tutorial mode. No need to record success or fail here
+			SAR.code += this.experimentType;
 		} else if (o instanceof PracticeDrillHuman) {
 			SAR.code += "PDH" + String.valueOf(this.numOfMoves) + (currentState == GameState.H1_WON ? "S" : "F");
 		} else if (o instanceof PracticeDrillAI) {
@@ -207,6 +216,14 @@ public class SAR extends JFrame {
 		}
 	}
 
+	/**
+	 * Method: getExperimentType
+	 * @return 1, 2, 3, or 4, where:
+	 *         1 - easy/bad AI, 2 - easy/good AI, 3 - hard/bad AI, 4 - hard/good AI
+	 */
+	protected int getExperimentType() {
+		return this.experimentType;
+	}
 	/**
 	 * Method: getCode
 	 * @return the codestring that contains stats re: the experiment
@@ -1090,7 +1107,7 @@ public class SAR extends JFrame {
 //				new SAR(options, "Robot 1", "Robot 2");
 
 				//Tutorial / Experiment mode.
-				new SAR("T 00 0% B", "Robot", "N/A");
+				new SAR("T00 0%B", "Robot", "N/A");
 			}
 		});
 	}

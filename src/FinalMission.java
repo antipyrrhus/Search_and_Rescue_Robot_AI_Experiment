@@ -43,25 +43,31 @@ public class FinalMission {
 		this.drillInstrIndex = -1;
 		sar.instrSetFont(sar.instructions.getFont().deriveFont(18f));
 
-		//TODO Hard environment. Comment out this or the other to vary the environment.
-		sar.board = new Board(new String[][]
-				{{"", "", "", "", "", "P"},
-				{"", "", "", "P", "", ""},
-				{"", "P", "", "W", "P", ""},
-				{"", "", "", "", "", ""},
-				{"", "", "", "W", "P", ""},
-				{"P", "", "", "P", "", "G"},
-				});
+		if (sar.getExperimentType() == 1 || sar.getExperimentType() == 2) { //easy environment
+			sar.board = new Board(new String[][]
+					{{"", "", "P", "", "", ""},
+					 {"", "", "P", "", "", ""},
+					 {"", "", "P", "", "", ""},
+					 {"", "", "", "G", "", "W"},
+					 {"", "", "", "", "", "W"},
+					 {"", "", "", "", "", ""},
+					});
+		} else if (sar.getExperimentType() == 3 || sar.getExperimentType() == 4) {  //hard environment
+			sar.board = new Board(new String[][]
+					{{"", "", "", "", "", "P"},
+					{"", "", "", "P", "", ""},
+					{"", "P", "", "W", "P", ""},
+					{"", "", "", "", "", ""},
+					{"", "", "", "W", "P", ""},
+					{"P", "", "", "P", "", "G"},
+					});
+		} else {
+			throw new RuntimeException("Something is wrong!");
+		}
+
 
 		//Easy environment
-//		sar.board = new Board(new String[][]
-//				{{"", "", "P", "", "", ""},
-//				 {"", "", "P", "", "", ""},
-//				 {"", "", "P", "", "", ""},
-//				 {"", "", "", "G", "", "W"},
-//				 {"", "", "", "", "", "W"},
-//				 {"", "", "", "", "", ""},
-//				});
+
 
 
 		Cell startRoom;
