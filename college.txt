@@ -1,9 +1,0 @@
-Brainy
-0.25 
-Sporty
-0.34 
-College, Brainy, Sporty
-T         T   1.0  
-T         F   1.0  
-F         T   1.0  
-F         F   0.0 
